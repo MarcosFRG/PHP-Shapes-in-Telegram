@@ -17,42 +17,33 @@ function isUserAdmin(){
 function formatForTelegram($text){
     // Caracteres problemáticos en MarkdownV2
     $problemChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
-    
-    // Proteger caracteres ya escapados manualmente
-    $escapedPlaceholders = [];
-    $text = preg_replace_callback('/\\\\([_*\[\]()~`>#+=|{}.!-])/', function($matches) use (&$escapedPlaceholders){
-        $placeholder = '%%ESC__' . md5($matches[1]) . '%%';
-        $escapedPlaceholders[$placeholder] = $matches[0];
+
+    // Proteger caracteres escapados manualmente
+    $escapedChars = [];
+    $text = preg_replace_callback('/\\\\([_*\[\]()~`>#+=|{}.!-])/', function($matches) use (&$escapedChars) {
+        $placeholder = '%%ESCCHAR_' . count($escapedChars) . '%%';
+        $escapedChars[$placeholder] = $matches[0]; // Guardamos el original
         return $placeholder;
     }, $text);
-    
-    // Para cada carácter problemático, verificar pares y escapar si es necesario
+
+    // Para cada carácter problemático, verificar pares
     foreach($problemChars as $char){
         // Contar ocurrencias del carácter sin escapar
-        $count = substr_count($text, $char) - substr_count($text, '\\'.$char);
-        
-        if($count % 2 != 0){ // Si es impar
-            // Encontrar la última ocurrencia sin escapar
-            $lastPos = 0;
-            $positions = [];
-            while(($lastPos = strpos($text, $char, $lastPos)) !== false){
-                // Verificar que no esté precedido por \
-                if($lastPos === 0 || $text[$lastPos - 1] !== '\\'){
-                    $positions[] = $lastPos;
-                }
-                $lastPos++;
-            }
+        $count = substr_count($text, $char);
 
-            if(!empty($positions)){
-                $lastPos = end($positions);
+        if($count % 2 != 0){ // Si es impar
+            // Encontrar la última ocurrencia
+            $lastPos = strrpos($text, $char);
+
+            if($lastPos !== false){
                 // Escapar solo el último
                 $text = substr_replace($text, '\\'.$char, $lastPos, 1);
             }
         }
     }
 
-    // Restaurar caracteres escapados manualmente
-    foreach($escapedPlaceholders as $placeholder => $original){
+    // Restaurar caracteres escapados originalmente
+    foreach($escapedChars as $placeholder => $original){
         $text = str_replace($placeholder, $original, $text);
     }
 
