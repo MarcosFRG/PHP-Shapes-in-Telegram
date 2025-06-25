@@ -14,16 +14,13 @@ function isUserAdmin(){
     return false;
 }
 
-function formatForTelegram($text){
-    // Caracteres especiales de MarkdownV2
+function formatMarkdown($text){
     $specialChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
 
-    // Primero escapamos TODOS los caracteres especiales
     foreach($specialChars as $char){
         $text = str_replace($char, '\\'.$char, $text);
     }
 
-    // Luego RESTAURAMOS los que forman parte de sintaxis válida
     $patterns = [
         '/\\\\\*(.*?)\\\\\*/' => '*$1*',
         '/\\\\\_(.*?)\\\\\_/' => '_$1_',
@@ -39,6 +36,29 @@ function formatForTelegram($text){
     return $text;
 }
 
+function formatForTelegram($text){
+    // Guardar los bloques de código
+    $codeBlocks = [];
+    $text = preg_replace_callback(
+        '/```(.*?)```/s',
+        function($matches) use (&$codeBlocks){
+            $id = count($codeBlocks);
+            $codeBlocks[$id] = $matches[0]; // Guardamos el bloque original
+            return "::::CODEBLOCK::$id::::";
+        },
+        $text
+    );
+
+    // Procesar el markdown normal
+    $text = formatMarkdown($text);
+
+    // Restaurar los bloques de código
+    foreach($codeBlocks as $id => $code){
+        $text = str_replace("::::CODEBLOCK::$id::::", $code, $text);
+    }
+
+    return $text;
+}
 function performWebSearch($query){
     global $SHAPES_API_KEY, $chat_id, $user_id, $SHAPE_USERNAME, $is_private, $keys_data, $using_key_id;
     $tPr = $is_private ? $SHAPE_USERNAME."/" : 'tg/';
