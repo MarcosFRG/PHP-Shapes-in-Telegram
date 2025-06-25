@@ -13,6 +13,7 @@ Esto es una BETA, no está muy bien optimizado...
 
 # También puedes:
 - Renombrar la carpeta '**TuBot/**'.
+
 # Qué NO debes hacer:
 - Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
 
