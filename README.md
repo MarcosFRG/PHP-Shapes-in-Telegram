@@ -1,6 +1,6 @@
 # PHP-Shapes-in-Telegram
 Esto es una BETA, no está muy bien optimizado...
-**Este proyecto usa la API de [Shapes, Inc.]**(https://github.com/shapesinc/shapes-api) para funcionar.
+**Este proyecto usa la API de [Shapes, Inc.](https://github.com/shapesinc/shapes-api) para funcionar.**
 
 # Para que esto te funcione debes:
 
