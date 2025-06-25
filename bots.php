@@ -25,7 +25,6 @@ if($callback_query){
     $callback_message_id = (string)$callback_query['message']['message_id'];
     $callback_chat_id = (string)$callback_query['message']['chat']['id'];
     $callback_user_id = (string)$callback_query['from']['id'];
-//    sendMessage("$callback_chat_id $callback_user_id");
     $chat_id = (string)$callback_chat_id;
     $user_id = (string)$callback_user_id;
 
@@ -273,7 +272,7 @@ elseif(strpos($user_text, "/http$bot_mention") === 0){
 
         $is_group ? sendReply($message_id, $formatted_response) : sendMessage($formatted_response);
     }else{
-        sendReply($message_id, "🌐 Uso: /http".str_replace("_", "\_", $bot_mention)." \[url\]\nEj: /http".str_replace("_", "\_", $bot_mention)." https\://ejemplo.com");
+        sendReply($message_id, "🌐 Uso: /http".str_replace("_", "\_", $bot_mention)." \[url\]\nEj: /http".str_replace("_", "\_", $bot_mention)." https://ejemplo.com");
     }
     exit;
 }
@@ -324,9 +323,9 @@ if(count($lines) == 3){
     // Escribir en el archivo
     file_put_contents($keys_file, json_encode($keys_data, JSON_PRETTY_PRINT));
 
-    sendMessage("✅ API Key registrada con ID\: $new_id, para usarla utiliza el comando '/setkey $new_id'");
+    sendMessage("✅ API Key registrada con ID: $new_id, para usarla utiliza el comando '/setkey $new_id'");
 }else{
-    sendMessage("❌ Formato inválido\. Usa\:
+    sendMessage("❌ Formato inválido\. Usa:
 /register
 Nombre
 API\_Key");
@@ -350,7 +349,7 @@ elseif(strpos($user_text, "/mykeys$bot_mention") === 0){
     }
     $using_key = $keys_data[file_get_contents("../users/$user_id/$SHAPE_USERNAME.txt")]["name"];
     $using_key = empty($using_key) ? "T" : "Actualmente estoy usando `$using_key`, y t";
-    sendMessage($keys_count>0 ? ($using_key."ienes *$keys_count* API Keys registradas\:$keys_str") : "❌ No tienes keys registradas\. Usa /register primero\.");
+    sendMessage($keys_count>0 ? ($using_key."ienes *$keys_count* API Keys registradas:$keys_str") : "❌ No tienes keys registradas\. Usa /register primero\.");
   }else{
     sendMessage("No tienes API Keys guardadas\.");
   }
@@ -376,7 +375,7 @@ elseif(strpos($user_text, "/setkey") === 0){
         if(file_exists($keys_file)){
             if(isset($keys_data[$key_id])){
                 file_put_contents("../users/$user_id/$SHAPE_USERNAME.txt", $key_id);
-                sendMessage("✅ API Key activada\: `".$keys_data[$key_id]['name']."`");
+                sendMessage("✅ API Key activada: `".$keys_data[$key_id]['name']."`");
             }else{
                 sendMessage("❌ No existe una key con ID *$key_id*.");
             }
@@ -384,7 +383,7 @@ elseif(strpos($user_text, "/setkey") === 0){
             sendMessage("❌ No tienes keys registradas\. Usa /register primero\.");
         }
     }else{
-        sendMessage("❌ Uso\: /setkey \[ID\]");
+        sendMessage("❌ Uso: /setkey \[ID\]");
     }
     exit;
 }
@@ -423,7 +422,7 @@ elseif(strpos($user_text, "/deletekey$bot_mention") === 0){
             $active_key_file = "../users/$user_id/$SHAPE_USERNAME.txt";
             if($is_active){
                 unlink($active_key_file);
-                $response = "🗑️ Key eliminada\: *$key_name*\n⚠️ Era tu key activa, ahora usarás la key por defecto\.";
+                $response = "🗑️ Key eliminada: *$key_name*\n⚠️ Era tu key activa, ahora usarás la key por defecto\.";
             }else{
                 // Si hay una key activa, actualizar su ID si era mayor que la eliminada
                 if(file_exists($active_key_file)){
@@ -432,12 +431,12 @@ elseif(strpos($user_text, "/deletekey$bot_mention") === 0){
                         $new_active_id = $current_active_id - 1;
                         file_put_contents($active_key_file, $new_active_id);
                         $active_key_name = $keys_data[$new_active_id]['name'];
-                        $response = "🗑️ Key eliminada\: *$key_name*\nℹ️ Tu key activa se actualizó de ID $current_active_id a $new_active_id (`$active_key_name`).";
+                        $response = "🗑️ Key eliminada: *$key_name*\nℹ️ Tu key activa se actualizó de ID $current_active_id a $new_active_id (`$active_key_name`).";
                     }else{
-                        $response = "🗑️ Key eliminada\: *$key_name*";
+                        $response = "🗑️ Key eliminada: *$key_name*";
                     }
                 }else{
-                    $response = "🗑️ Key eliminada\: *$key_name*";
+                    $response = "🗑️ Key eliminada: *$key_name*";
                 }
             }
 
@@ -447,7 +446,7 @@ elseif(strpos($user_text, "/deletekey$bot_mention") === 0){
 Usa /mykeys$bot_mention para ver tus keys\.");
         }
     }else{
-        sendMessage("❌ Uso\: /deletekey$bot_mention \[ID\]
+        sendMessage("❌ Uso: /deletekey$bot_mention \[ID\]
 _Usa /mykeys para ver tus keys\._");
     }
     exit;
@@ -484,11 +483,11 @@ elseif(strpos($user_text, "/editkey$bot_mention") === 0){
             $active_key_file = "../users/$user_id/$SHAPE_USERNAME.txt";
             $is_active = file_exists($active_key_file) && file_get_contents($active_key_file) == $key_id;
 
-            $response = "✅ Key *$key_id* actualizada\:
-Antiguo nombre\: `$old_name`
-Antigua API Key\: `$old_key`
-Nuevo nombre\: `$new_name`
-Nueva API Key\: `$new_key`";
+            $response = "✅ Key *$key_id* actualizada:
+Antiguo nombre: `$old_name`
+Antigua API Key: `$old_key`
+Nuevo nombre: `$new_name`
+Nueva API Key: `$new_key`";
 
             if($is_active){
                 $response .= "
@@ -502,7 +501,7 @@ Nueva API Key\: `$new_key`";
 Usa /mykeys para ver tus keys\.");
         }
     }else{
-        sendMessage("❌ Formato incorrecto\. Usa\:
+        sendMessage("❌ Formato incorrecto\. Usa:
 /editkey \[ID\]
 \[Nuevo nombre\]
 \[Nueva API Key\]");
