@@ -6,8 +6,9 @@ $SHAPE_USERNAME = 'tu-shape'; // Ej: lilly-suzuki
 $SHAPE_NAME = 'Nombre de tu shape';
 $BOT_USERNAME = 'Tu_bot'; // Ej: "Lilly_Suzuki_shape_bot" (SIN EL @)
 
-// Lilly responderá siempre cuando exista, mínimo, una de estas palabras (variable opcional)
-$Favorite_words = ["Lilly", "Suzuki", "tímida"];
+// El shape responderá siempre cuando exista, mínimo,
+// una de estas palabras (opcional)
+$Favorite_words = ["LOL", "KKDBB", "oye", "hey"];
 
 // Formato "palabra" => [reacciones...] (opcional)
 $Reactions = [
