@@ -1,9 +1,8 @@
 # PHP-Shapes-in-Telegram
 Esto es una BETA, no está muy bien optimizado...
-**Este proyecto usa la API de [Shapes, Inc.](https://github.com/shapesinc/shapes-api) para funcionar.**
+**Este proyecto usa [Shapes, Inc. API](https://github.com/shapesinc/shapes-api) para funcionar.**
 
 # Para que esto te funcione debes:
-
 - Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key** (el app-id no es necesario).
 - Subir los archivos a tu servidor HTTP (con PHP y **SSL válido**).
 - Crear un bot en Telegram (con [**@BotFather**](https://t.me/BotFather)).
@@ -13,6 +12,7 @@ Esto es una BETA, no está muy bien optimizado...
 
 # También puedes:
 - Renombrar la carpeta '**TuBot/**'.
+- Copiar la carpeta '**TuBot**' con otro nombre para hacer otra shape, sin tener que subir todos los archivos de nuevo a otro servidor.
 
 # Qué NO debes hacer:
 - Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
