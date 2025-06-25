@@ -5,12 +5,16 @@ Esto es una BETA, no está muy bien optimizado...
 # Para que esto te funcione debes:
 
 - Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key** (el app-id no es necesario).
-- Configurar los archivos '**config.php**' y '**TuBot/bot.php**'.
 - Subir los archivos a tu servidor HTTP (con PHP y **SSL válido**).
 - Crear un bot en Telegram (con [**@BotFather**](https://t.me/BotFather)).
-- El token de tu bot lo pones en '**TuBot/bot.php**'.
-- Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**) y añadir el token de tu bot Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot (**https://ejemplo.com/TuBot/bot.php**).
+- Configurar los archivos '**config.php**' y '**TuBot/bot.php**'.
+- Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**), añadir el token de tu bot Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot en tu servidor HTTP (**https://ejemplo.com/TuBot/bot.php**).
 # ... ¡y listo! Ya deberías tener tu shape bot funcionando sin problemas.
+
+# También puedes:
+- Renombrar la carpeta '**TuBot/**'.
+# Qué NO debes hacer:
+- Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
 
 Si tienes preguntas o problemas, puedes unirte a mi grupo de Shapes de **Telegram** ([MFRG_Shapes_chat](https://t.me/MFRG_Shapes)) o [escribirme directamente](https://t.me/MarcosFRGames).
 ¡Prueba mis shapes [aquí](https://t.me/MFRG_Shapes)!
