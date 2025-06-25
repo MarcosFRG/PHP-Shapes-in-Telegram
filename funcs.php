@@ -59,6 +59,7 @@ function formatForTelegram($text){
 
     return $text;
 }
+
 function performWebSearch($query){
     global $SHAPES_API_KEY, $chat_id, $user_id, $SHAPE_USERNAME, $is_private, $keys_data, $using_key_id;
     $tPr = $is_private ? $SHAPE_USERNAME."/" : 'tg/';
