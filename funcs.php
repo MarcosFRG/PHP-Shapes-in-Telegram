@@ -15,38 +15,44 @@ function isUserAdmin(){
 }
 
 function formatForTelegram($text){
-    // Caracteres problemáticos en MarkdownV2
-    $problemChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
-
-    // Proteger caracteres escapados manualmente
-    $escapedChars = [];
-    $text = preg_replace_callback('/\\\\([_*\[\]()~`>#+=|{}.!-])/', function($matches) use (&$escapedChars) {
-        $placeholder = '%%ESCCHAR_' . count($escapedChars) . '%%';
-        $escapedChars[$placeholder] = $matches[0]; // Guardamos el original
-        return $placeholder;
-    }, $text);
-
-    // Para cada carácter problemático, verificar pares
-    foreach($problemChars as $char){
-        // Contar ocurrencias del carácter sin escapar
-        $count = substr_count($text, $char);
-
-        if($count % 2 != 0){ // Si es impar
-            // Encontrar la última ocurrencia
-            $lastPos = strrpos($text, $char);
-
-            if($lastPos !== false){
-                // Escapar solo el último
-                $text = substr_replace($text, '\\'.$char, $lastPos, 1);
+    // Caracteres especiales de MarkdownV2
+    $specialChars = ['_','*','[',']','(',')','~','`','>','#','+','-','=','|','{','}','.','!'];
+    
+    // Proteger bloques de código y enlaces
+    $placeholders = [];
+    $patterns = [
+        '/```([\s\S]*?)```/' => 'CB', // CodeBlock
+        '/`([^`]+)`/' => 'IC',        // InlineCode
+        '/\[([^\]]+)\]\(([^)]+)\)/' => 'LK' // LinK
+    ];
+    
+    foreach($patterns as $pattern => $type){
+        $text = preg_replace_callback($pattern,function($matches)use(&$placeholders,$type){
+            $key = '##'.$type.count($placeholders).'##';
+            $placeholders[$key] = $matches[0];
+            return $key;
+        },$text);
+    }
+    
+    // Procesar cada tipo de carácter especial
+    foreach($specialChars as $char){
+        // Contar ocurrencias no escapadas
+        $count = preg_match_all("/(?<!\\\\)\\".$char.'/',$text);
+        
+        // Si es impar, escapar el último
+        if($count%2 != 0){
+            $pos = strrpos($text,$char);
+            if($pos !== false){
+                $text = substr_replace($text,'\\'.$char,$pos,1);
             }
         }
     }
-
-    // Restaurar caracteres escapados originalmente
-    foreach($escapedChars as $placeholder => $original){
-        $text = str_replace($placeholder, $original, $text);
+    
+    // Restaurar bloques protegidos
+    foreach($placeholders as $key => $original){
+        $text = str_replace($key,$original,$text);
     }
-
+    
     return $text;
 }
 
