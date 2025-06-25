@@ -12,7 +12,7 @@ Esto es una BETA, no está muy bien optimizado...
 
 # También puedes:
 - Renombrar la carpeta '**TuBot/**'.
-- Copiar la carpeta '**TuBot**' con otro nombre para hacer otra shape, sin tener que subir todos los archivos de nuevo a otro servidor.
+- Copiar la carpeta '**TuBot/**' con otro nombre para hacer otra shape, sin tener que subir todos los archivos de nuevo a otro servidor.
 
 # Qué NO debes hacer:
 - Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
