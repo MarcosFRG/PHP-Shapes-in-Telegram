@@ -16,43 +16,26 @@ function isUserAdmin(){
 
 function formatForTelegram($text){
     // Caracteres especiales de MarkdownV2
-    $specialChars = ['_','*','[',']','(',')','~','`','>','#','+','-','=','|','{','}','.','!'];
-    
-    // Proteger bloques de código y enlaces
-    $placeholders = [];
-    $patterns = [
-        '/```([\s\S]*?)```/' => 'CB', // CodeBlock
-        '/`([^`]+)`/' => 'IC',        // InlineCode
-        '/\[([^\]]+)\]\(([^)]+)\)/' => 'LK' // LinK
-    ];
-    
-    foreach($patterns as $pattern => $type){
-        $text = preg_replace_callback($pattern,function($matches)use(&$placeholders,$type){
-            $key = '##'.$type.count($placeholders).'##';
-            $placeholders[$key] = $matches[0];
-            return $key;
-        },$text);
-    }
-    
-    // Procesar cada tipo de carácter especial
+    $specialChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
+
+    // Primero escapamos TODOS los caracteres especiales
     foreach($specialChars as $char){
-        // Contar ocurrencias no escapadas
-        $count = preg_match_all("/(?<!\\\\)\\".$char.'/',$text);
-        
-        // Si es impar, escapar el último
-        if($count%2 != 0){
-            $pos = strrpos($text,$char);
-            if($pos !== false){
-                $text = substr_replace($text,'\\'.$char,$pos,1);
-            }
-        }
+        $text = str_replace($char, '\\'.$char, $text);
     }
-    
-    // Restaurar bloques protegidos
-    foreach($placeholders as $key => $original){
-        $text = str_replace($key,$original,$text);
+
+    // Luego RESTAURAMOS los que forman parte de sintaxis válida
+    $patterns = [
+        '/\\\\\*(.*?)\\\\\*/' => '*$1*',
+        '/\\\\\_(.*?)\\\\\_/' => '_$1_',
+        '/\\\\\`(.*?)\\\\\`/' => '`$1`',
+        '/\\\\\`\\\\\`\\\\\`(.*?)\\\\\`\\\\\`\\\\\`/s' => '```$1```',
+        '/\\\\\[(.*?)\\\\\]\\\\\((.*?)\\\\\)/' => '[$1]($2)'
+    ];
+
+    foreach($patterns as $pattern => $replacement){
+        $text = preg_replace($pattern, $replacement, $text);
     }
-    
+
     return $text;
 }
 
