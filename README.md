@@ -31,12 +31,17 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 ## Qué NO debes hacer:
 - Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
 
-### El shape bot recibe:
+### El shape bot recibe (por ahora):
+- [X] Comandos
 - [X] Mensajes de texto
 - [X] Imágenes
 - [ ] Audio/voz
 - [ ] Stickers
 - [ ] Encuestas
+
+## Solución de problemas
+- **Error 500**: Verifica que las extensiones PHP estén activadas.
+- **Webhook no funciona**: Asegúrate de que tu servidor tenga SSL válido.
 
 Si tienes preguntas o problemas, puedes unirte a mi grupo de Shapes de **Telegram** ([MFRG_Shapes_chat](https://t.me/MFRG_Shapes)) o [escribirme directamente](https://t.me/MarcosFRGames).
 ¡Prueba mis shapes [aquí](https://t.me/MFRG_Shapes)!
