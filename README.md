@@ -36,6 +36,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Mensajes de texto
 - [X] Imágenes
 - [X] Audio/voz
+- [X] Documentos (no PDF)
 - [ ] Stickers
 - [ ] Encuestas
 
