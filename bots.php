@@ -13,10 +13,11 @@ $ACTIVATION_FOLDER = 'Activated';
 
 if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 
-$update = json_decode(file_get_contents('php://input'), true);
+$php_input = file_get_contents('php://input');
+$update = json_decode($php_input, true);
+//file_put_contents("a.txt", $php_input);
 $callback_query = $update['callback_query'] ?? null;
-$message = $update['message'] ?? null;
-if(!$message && !$callback_query) exit;
+$message = $update['message'] ?? $update['edited_message'] ?? null;
 
 global $chat_id, $user_id;
 
@@ -50,7 +51,7 @@ if($callback_query){
 $chat_id = (string)$message['chat']['id'];
 $message_id = (string)$message['message_id'];
 $chat_type = $message['chat']['type'];
-$user_text = $message['text'] ?? '';
+$user_text = $message['text'] ?? $message['caption'] ?? '';
 $is_private = ($chat_type === 'private');
 $is_group = ($chat_type === 'group' || $chat_type === 'supergroup');
 $group_file = "$ACTIVATION_FOLDER/$chat_id.txt";
@@ -58,6 +59,21 @@ $group_file = "$ACTIVATION_FOLDER/$chat_id.txt";
 if($is_private && trim($user_text)=="/start"){
   sendMessage("✅"); 
   exit;
+}
+
+$image_url = null;
+$audio_url = null;
+
+if(isset($message['voice'])){
+    $file_id = $message['voice']['file_id'];
+    $audio_url = getTelegramFileUrl($file_id);
+}elseif((isset($message['document']) && strpos($message['document']['mime_type'], "audio") !== false) || isset($message['audio'])){
+    $file_id = $message['document']['file_id'] ?? $message['audio']['file_id'];
+    $audio_url = getTelegramFileUrl($file_id);
+}elseif(isset($message['photo'])){
+    $photo = end($message['photo']);
+    $file_id = $photo['file_id'];
+    $image_url = getTelegramFileUrl($file_id);
 }
 
 global $user_name, $bot_mention;
@@ -550,21 +566,6 @@ if($is_private){
     }
 }
 
-$image_url = null;
-$audio_url = null;
-
-if(isset($message['voice'])){
-    $file_id = $message['voice']['file_id'];
-    $audio_url = getTelegramFileUrl($file_id);
-}elseif(isset($message['audio'])){
-    $file_id = $message['audio']['file_id'];
-    $audio_url = getTelegramFileUrl($file_id);
-}elseif(isset($message['photo'])){
-    $photo = end($message['photo']);
-    $file_id = $photo['file_id'];
-    $image_url = getTelegramFileUrl($file_id);
-}
-
 $OReacts = [
   "Hol" => ["🖐️", "👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
   "Adi" => ["🖐️", "🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
@@ -584,10 +585,10 @@ if(!empty($foundReactions)){
   $randomReaction = $foundReactions[array_rand($foundReactions)];
 }
 
-if($should_respond && (!empty($clean_text) || !empty($image_url))){
-  if(rand(1,$REACT_PROB1)==1) setMessageReaction($randomReaction);
+if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audio_url))){
+  if(rand(1,$REACT_PROB1)===1) setMessageReaction($randomReaction);
     $enhanced_text = $clean_text.$web_search_context."\n".$user_context;
-    $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url);
+    $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url, $audio_url);
     $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "$SHAPE_NAME (tú, $BOT_USERNAME)"], trim($response));
     $formatted_response = formatForTelegram($new_response);
 
@@ -662,8 +663,8 @@ if(!empty($media_urls)){
         $fallback_msg = "Eh?";
         $is_group ? sendReply($message_id, $fallback_msg) : sendMessage($fallback_msg);
     }
-}elseif(rand(1,$REACT_PROB2)==1){
+}elseif(rand(1,$REACT_PROB2)===1){
   setMessageReaction($randomReaction);
 }
-exit; // Por si acaso, para que los procesos en 2do plano no se queden reproduciéndose infinitamente...
+exit; // Por si acaso...
 ?>

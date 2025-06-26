@@ -75,7 +75,7 @@ function performWebSearch($query){
         "X-Channel-Id: ".$tPr.$chat_id
     ];
 
-    $data = ['query' => $query, 'max_results' => 10];
+    $data = ['query' => $query, 'max_results' => 50];
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -124,14 +124,13 @@ function getTelegramFileUrl($file_id){
     return null;
 }
 
-function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null){
+function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null, $audio_url = null){
   global $MAX_ATTEMPTS;
-    $max_attempts = $MAX_ATTEMPTS;
     $attempt = 0;
     $result = "Eh? (Error desconocido)";
 
-    while($attempt < $max_attempts){
-        $result = call_shapes_api($text, $api_key, $shape, $image_url);
+    while($attempt < $MAX_ATTEMPTS){
+        $result = call_shapes_api($text, $api_key, $shape, $image_url, $audio_url);
 
         if(strpos($result, "Error 429") === false) break;
 
@@ -194,7 +193,7 @@ function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url 
     curl_close($ch);
 
     if($http_code == 429){
-        return "Eh? (Error 429 - Demasiadas solicitudes, el máximo global es *20* por minuto.)";
+        return "Eh? (Error 429 - Demasiadas solicitudes, el máximo global es *20* por minuto\.)";
     }elseif($http_code != 200){
         return "Eh? (Error $http_code)";
     }
