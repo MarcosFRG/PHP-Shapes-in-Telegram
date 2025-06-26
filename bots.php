@@ -17,7 +17,7 @@ $php_input = file_get_contents('php://input');
 $update = json_decode($php_input, true);
 //file_put_contents("a.txt", $php_input);
 $callback_query = $update['callback_query'] ?? null;
-$message = $update['message'] ?? $update['edited_message'] ?? null;
+$message = $update['message'] ?? null;
 
 global $chat_id, $user_id;
 
