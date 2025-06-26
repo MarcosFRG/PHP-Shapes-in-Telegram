@@ -2,8 +2,8 @@
 Esto es una BETA, no está muy bien optimizado...
 **Este proyecto usa [Shapes, Inc. API](https://github.com/shapesinc/shapes-api) para funcionar.**
 
-### Versión de PHP mínima: 7.4+
-### Versión de PHP recomendada: 8.0+
+**Versión de PHP mínima: 7.4+**
+**Versión de PHP recomendada: 8.0+**
 
 ## Extensiones PHP necesarias:
 - cURL
