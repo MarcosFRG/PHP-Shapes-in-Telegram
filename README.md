@@ -9,7 +9,7 @@ Esto es una BETA, no está muy bien optimizado...
 - Subir los archivos a tu servidor HTTP (con PHP y **SSL válido**).
 - Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**), añadir el token de tu bot Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot en tu servidor HTTP (**https://ejemplo.com/TuBot/bot.php**).
 # ... ¡y listo! Ya deberías tener tu shape bot funcionando sin problemas.
-Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/aplicar los comandos de tus Shape Bots de Telegram.
+Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/aplicar los comandos de tus shape bots de Telegram.
 
 # También puedes:
 - Renombrar la carpeta '**TuBot/**'.
