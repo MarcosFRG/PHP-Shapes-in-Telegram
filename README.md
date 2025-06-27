@@ -38,7 +38,8 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Mensajes de texto
 - [X] Imágenes
 - [X] Audio/voz
-- [X] Documentos pequeños (.json, .txt, etc.)
+- [X] Documentos pequeños
+- [X] Procesar PDF
 - [ ] Stickers
 - [ ] Encuestas
 
