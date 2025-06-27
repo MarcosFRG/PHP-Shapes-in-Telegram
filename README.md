@@ -14,7 +14,7 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 - OpenSSL
 - BCMath
 
-#### (Hostings como x10Hosting ya tienen todas instaladas)
+##### (Hostings como x10Hosting ya tienen todas instaladas)
 
 ## Para que esto te funcione debes:
 1. Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key** (el app-id no es necesario).
