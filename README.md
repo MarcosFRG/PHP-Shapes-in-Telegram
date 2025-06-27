@@ -50,8 +50,6 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - **Error 500**: Verifica que las extensiones PHP estén activadas.
 - **Webhook no funciona**: Asegúrate de que tu servidor tenga SSL válido.
 
-[![PHP-Shapes1](https://img.marcosfrg.x10.mx/IMGFiles08/PHP+Shapes/FT1.png)](https://shapes.inc/developer)
-
 Si tienes preguntas o problemas, puedes unirte a mi grupo de Shapes de **Telegram** ([MFRG_Shapes_chat](https://t.me/MFRG_Shapes)) o [escribirme directamente](https://t.me/MarcosFRGames).
 ¡Prueba mis shapes [aquí](https://t.me/MFRG_Shapes)!
 
