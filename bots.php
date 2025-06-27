@@ -77,7 +77,7 @@ if(isset($message['voice'])){
   $file_id = $message['document']['file_id'];
   $file_name = $message['document']['file_name'] ?? 'file.txt';
   $file_size = $message['document']['file_size'];
-  if($file_size>(1024*1024*5
+  if($file_size>(1024*5
 $MAX_DOCSIZE)){
   $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.($file_size/1024).' MiB)
 
