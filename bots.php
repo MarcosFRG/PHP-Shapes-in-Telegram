@@ -15,7 +15,6 @@ if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 
 $php_input = file_get_contents('php://input');
 $update = json_decode($php_input, true);
-//file_put_contents("a.txt", $php_input);
 $callback_query = $update['callback_query'] ?? null;
 $message = $update['message'] ?? null;
 
@@ -60,52 +59,6 @@ if($is_private && trim($user_text)=="/start"){
   sendMessage("✅"); 
   exit;
 }
-
-$image_url = null;
-$audio_url = null;
-
-$is_doc = isset($message['document']);
-$doc_txt = "";
-
-if(isset($message['voice'])){
-    $file_id = $message['voice']['file_id'];
-    $audio_url = getTelegramFileUrl($file_id);
-}elseif(($is_doc && strpos($message['document']['mime_type'], "audio") !== false) || isset($message['audio'])){
-    $file_id = $message['document']['file_id'] ?? $message['audio']['file_id'];
-    $audio_url = getTelegramFileUrl($file_id);
-}elseif($is_doc){
-  $file_id = $message['document']['file_id'];
-  $file_name = $message['document']['file_name'] ?? 'file.txt';
-  $file_size = $message['document']['file_size'];
-  $file_type = $message['document']['mime_type'];
-  $is_pdf = (stripos($file_name, "pdf") !== false);
-  if((!$is_pdf && $file_size>(1024*$MAX_DOCSIZE)) || $file_size>(1024*1024*$MAX_PDFSIZE)){
-  $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.($file_size/1024/1024).' KiB)
-
-';
-}else{
-  $doc_url = getTelegramFileUrl($file_id);
-  $doc_ext = (stripos($file_type, "json") !== false) ? 'json' : ($is_pdf ? 'pdf' : 'plaintext');
-  $doc_dlc = @file_get_contents($doc_url);
-  if($is_pdf){
-    require_once "../PDFAL.php-dist";
-    $parser = new \Smalot\PdfParser\Parser();
-    $pdf = $parser->parseContent($doc_dlc);
-    $doc_dlc = $pdf->getText();
-  }
-  if(!empty($doc_dlc)) $doc_txt = '```'.$doc_ext.' - \"'.$file_name.'\"
-'.str_replace("\"", "\\\"", $doc_dlc).'
-```
-
-';
-}
-}elseif(isset($message['photo'])){
-    $photo = end($message['photo']);
-    $file_id = $photo['file_id'];
-    $image_url = getTelegramFileUrl($file_id);
-}
-
-if(!empty($doc_ext)) $user_text = "$doc_txt$user_text";
 
 global $user_name, $bot_mention;
 $user = $message['from'];
@@ -571,6 +524,58 @@ if($command_response!=""){
   $is_group ? sendReply($message_id, $command_response) : sendMessage($command_response);
   exit;
 }
+
+$image_url = null;
+$audio_url = null;
+
+$is_doc = isset($message['document']);
+$doc_txt = "";
+
+if(isset($message['voice'])){
+    $file_id = $message['voice']['file_id'];
+    $audio_url = getTelegramFileUrl($file_id);
+}elseif(($is_doc && strpos($message['document']['mime_type'], "audio") !== false) || isset($message['audio'])){
+    $file_id = $message['document']['file_id'] ?? $message['audio']['file_id'];
+    $audio_url = getTelegramFileUrl($file_id);
+}elseif($is_doc){
+  $file_id = $message['document']['file_id'];
+  $file_name = $message['document']['file_name'] ?? 'file.txt';
+  $file_size = $message['document']['file_size'];
+  $file_type = $message['document']['mime_type'];
+  $is_pdf = (stripos($file_name, "pdf") !== false);
+  if((!$is_pdf && $file_size>(1024*$DOCSIZE)) || $file_size>(1024*1024*$MAX_PDFSIZE)){
+  $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.($file_size/1024/1024).' KiB)
+
+';
+}else{
+  $doc_url = getTelegramFileUrl($file_id);
+  $doc_ext = (stripos($file_type, "json") !== false) ? 'json' : ($is_pdf ? 'pdf' : 'plaintext');
+  $doc_dlc = @file_get_contents($doc_url);
+  if($is_pdf){
+    require_once "../PDFAL.php-dist";
+    $parser = new \Smalot\PdfParser\Parser();
+    $pdf = $parser->parseContent($doc_dlc);
+    $doc_dlc = $pdf->getText();
+    $doc_len = strlen($doc_dlc);
+    if($doc_len>1024*$MAX_DOCSIZE){
+    $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.$doc_len.' caracteres)
+
+';
+}
+  }
+  if(!empty($doc_dlc)) $doc_txt = '```'.$doc_ext.' - (Contenido del archivo \"'.$file_name.'\")
+'.str_replace("\"", "\\\"", $doc_dlc).'
+```
+
+';
+}
+}elseif(isset($message['photo'])){
+    $photo = end($message['photo']);
+    $file_id = $photo['file_id'];
+    $image_url = getTelegramFileUrl($file_id);
+}
+
+if(!empty($doc_ext)) $user_text = "$doc_txt$user_text";
 
 $should_respond = false;
 $clean_text = str_replace(["!reset", "!wack", "!imagine", "!info", "!web", "!sleep", "!help", "!dashboard"], ["\!\\reset", "\!\\wack", "\!\\imagine", "\!\\info", "\!\\web", "\!\\sleep", "\!\\help", "\!\\dashboard"], trim($user_text));
