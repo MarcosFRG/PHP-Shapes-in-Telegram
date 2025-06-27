@@ -35,8 +35,8 @@ namespace Smalot\PdfParser\Font;
 use Smalot\PdfParser\Font;
 
 /**
- * Class FontType1
+ * Class FontCIDFontType0
  */
-class FontType1 extends Font
+class FontCIDFontType0 extends Font
 {
 }
