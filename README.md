@@ -16,10 +16,10 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 
 ## Para que esto te funcione debes:
 1. Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key** (el app-id no es necesario).
-2. Crear un bot en Telegram (con [**@BotFather**](https://t.me/BotFather)).
-3. Configurar los archivos '**config.php**' y '**TuBot/bot.php**'.
-4. Subir los archivos a tu servidor HTTP (con PHP y **SSL válido**).
-5. Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**), añadir el token de tu bot de Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot en tu servidor HTTP (**https://ejemplo.com/TuBot/bot.php**).
+3. Crear un bot en Telegram (con [**@BotFather**](https://t.me/BotFather)).
+4. Configurar los archivos '**config.php**' y '**TuBot/bot.php**'.
+5. Subir los archivos a tu servidor HTTP (con PHP y **SSL válido**).
+6. Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**), añadir el token de tu bot de Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot en tu servidor HTTP (**https://ejemplo.com/TuBot/bot.php**).
 
 ## ... ¡y listo! Ya deberías tener tu shape bot funcionando sin problemas.
 Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/aplicar los comandos de tus shape bots de Telegram.
@@ -36,7 +36,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Mensajes de texto
 - [X] Imágenes
 - [X] Audio/voz
-- [X] Documentos (no PDF)
+- [X] Documentos pequeños (.json, .txt, etc.)
 - [ ] Stickers
 - [ ] Encuestas
 
@@ -50,6 +50,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - **Error 500**: Verifica que las extensiones PHP estén activadas.
 - **Webhook no funciona**: Asegúrate de que tu servidor tenga SSL válido.
 
+[PHP-Shapes1](https://img.marcosfrg.x10.mx?f=PHP+Shapes/FT1.png)
 
 Si tienes preguntas o problemas, puedes unirte a mi grupo de Shapes de **Telegram** ([MFRG_Shapes_chat](https://t.me/MFRG_Shapes)) o [escribirme directamente](https://t.me/MarcosFRGames).
 ¡Prueba mis shapes [aquí](https://t.me/MFRG_Shapes)!
