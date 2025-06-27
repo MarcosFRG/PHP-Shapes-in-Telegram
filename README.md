@@ -13,6 +13,7 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 - JSON
 - OpenSSL
 - BCMath
+- PDFParser (viene incluído)
 
 ##### (Hostings como x10Hosting ya tienen todas instaladas)
 
