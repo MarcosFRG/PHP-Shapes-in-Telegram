@@ -77,14 +77,22 @@ if(isset($message['voice'])){
   $file_id = $message['document']['file_id'];
   $file_name = $message['document']['file_name'] ?? 'file.txt';
   $file_size = $message['document']['file_size'];
-  if($file_size>(1024*$MAX_DOCSIZE)){
+  $file_type = $message['document']['mime_type'];
+  $is_pdf = (stripos($file_name, "pdf") !== false);
+  if((!$is_pdf && $file_size>(1024*$MAX_DOCSIZE)) || $file_size>(1024*1024*$MAX_PDFSIZE)){
   $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.($file_size/1024/1024).' KiB)
 
 ';
 }else{
   $doc_url = getTelegramFileUrl($file_id);
-  $doc_ext = (stripos($message['document']['mime_type'], "json") !== false) ? 'json' : 'plaintext';
+  $doc_ext = (stripos($file_type, "json") !== false) ? 'json' : ($is_pdf ? 'pdf' : 'plaintext');
   $doc_dlc = @file_get_contents($doc_url);
+  if($is_pdf){
+    require_once "../PDFAL.php-dist";
+    $parser = new \Smalot\PdfParser\Parser();
+    $pdf = $parser->parseContent($doc_dlc);
+    $doc_dlc = $pdf->getText();
+  }
   if(!empty($doc_dlc)) $doc_txt = '```'.$doc_ext.' - \"'.$file_name.'\"
 '.str_replace("\"", "\\\"", $doc_dlc).'
 ```
