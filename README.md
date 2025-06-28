@@ -40,7 +40,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Imágenes
 - [X] Audio/voz
 - [X] Documentos pequeños
-- [X] Procesar PDF
+- [X] Procesar PDF (solo texto)
 - [ ] Stickers
 - [ ] Encuestas
 
