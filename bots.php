@@ -30,6 +30,7 @@ if($callback_query){
 
     answerCallbackQuery($callback_query['id']);
 
+    $keys_file = "../users/$user_id/keys.json";
     $using_key_id = file_get_contents("../users/$user_id/$SHAPE_USERNAME.txt");
     $keys_data = [];
     if(file_exists($keys_file)){
