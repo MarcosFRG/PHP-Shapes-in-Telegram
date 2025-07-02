@@ -2,7 +2,7 @@
 // Tu contraseña secreta para añadir comandos.
 $SITE_PASS = 'TU_CONTRASEÑA';
 // Tamaño máximo de documentos en KiB (ten en cuenta que esto llena el contexto del modelo)
-$MAX_DOCSIZE = 50;
+$MAX_DOCSIZE = 15;
 // Tamaño máximo de PDFs a procesar en MiB (este no llenaría tanto el contexto del modelo, ya que solo se extrae el texto)
 $MAX_PDFSIZE = 100;
 // Probabilidad de que el bot añada una reacción a mensajes dirijidos a este (actual: 1/30)
