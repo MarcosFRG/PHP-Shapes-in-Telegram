@@ -1,5 +1,5 @@
 <?php
-require "../config.php";
+require_once "../config.php";
 require "../funcs.php";
 
 ini_set('max_execution_time', 60);
@@ -15,11 +15,11 @@ if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 
 $php_input = file_get_contents('php://input');
 $update = json_decode($php_input, true);
+//file_put_contents("a.txt", $php_input);
 $callback_query = $update['callback_query'] ?? null;
 $message = $update['message'] ?? null;
 
-global $chat_id, $user_id;
-
+global $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $keys_file;
 if($callback_query){
     $callback_data = $callback_query['data'];
     $callback_message_id = (string)$callback_query['message']['message_id'];
@@ -27,8 +27,6 @@ if($callback_query){
     $callback_user_id = (string)$callback_query['from']['id'];
     $chat_id = (string)$callback_chat_id;
     $user_id = (string)$callback_user_id;
-
-    answerCallbackQuery($callback_query['id']);
 
     $keys_file = "../users/$user_id/keys.json";
     $using_key_id = file_get_contents("../users/$user_id/$SHAPE_USERNAME.txt");
@@ -38,13 +36,15 @@ if($callback_query){
     }
     if(!empty($using_key_id)) $SHAPES_API_KEY = base64_decode($keys_data[$using_key_id]['key']);
 
+    answerCallbackQuery($callback_query['id']);
+
     if($callback_data === 'reset_cancel'){
         deleteMessage($callback_chat_id, $callback_message_id);
         exit;
     }
     if($callback_data !== 'reset_confirm') exit;
 
-    editMessageText($callback_chat_id, $callback_message_id, formatForTelegram(call_shapes_api('!reset', $SHAPES_API_KEY, $SHAPE_USERNAME)));
+    editMessageText($callback_chat_id, $callback_message_id, formatForTelegram(call_shapes_api_with_queue('!reset', $SHAPES_API_KEY, $SHAPE_USERNAME)));
     exit;
 }
 
@@ -68,7 +68,6 @@ $user_id = (string)$user['id'];
 
 if(!file_exists("../users/$user_id")) mkdir("../users/$user_id", 0777, true);
 
-global $using_key_id, $keys_file;
 $using_key_id = file_get_contents("../users/$user_id/$SHAPE_USERNAME.txt");
 $keys_file = "../users/$user_id/keys.json";
 $keys_data = [];
@@ -119,7 +118,7 @@ if(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/wack$bo
     sendReply($message_id, $response);
     exit;
   }
-  $reply = formatForTelegram(call_shapes_api('!wack', $SHAPES_API_KEY, $SHAPE_USERNAME));
+  $reply = formatForTelegram(call_shapes_api_with_queue('!wack', $SHAPES_API_KEY, $SHAPE_USERNAME));
   $is_group ? sendReply($message_id, $reply) : sendMessage($reply);
   exit;
 }
@@ -145,7 +144,7 @@ $keyboard = [
     ]
 ];
 
-    $confirm_message = "¿Estás segur@ de que quieres *borrar la memoria de $SHAPE_NAME* en este chat *para siempre*?";
+    $confirm_message = "¿Estás segur@ de que quieres *borrar la memoria de ". formatForTelegram($SHAPE_NAME)."* en este chat *para siempre*?";
 
     $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage";
     $data = [
@@ -297,7 +296,7 @@ elseif(strpos($user_text, "/sleep$bot_mention") === 0){
 }
 // /ask
 elseif($is_group && strpos($user_text, "/ask$bot_mention ") === 0){
-  $response = formatForTelegram(call_shapes_api(str_replace("/ask$bot_mention ", "", $user_text), $SHAPES_API_KEY, $SHAPE_USERNAME));
+  $response = formatForTelegram(call_shapes_api_with_queue(str_replace("/ask$bot_mention ", "", $user_text), $SHAPES_API_KEY, $SHAPE_USERNAME));
   sendReply($message_id, $response);
   exit;
 }
@@ -544,7 +543,7 @@ if(isset($message['voice'])){
   $file_size = $message['document']['file_size'];
   $file_type = $message['document']['mime_type'];
   $is_pdf = (stripos($file_name, "pdf") !== false);
-  if((!$is_pdf && $file_size>(1024*$DOCSIZE)) || $file_size>(1024*1024*$MAX_PDFSIZE)){
+  if((!$is_pdf && $file_size>(1024*$MAX_DOCSIZE)) || $file_size>(1024*1024*$MAX_PDFSIZE)){
   $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.($file_size/1024/1024).' KiB)
 
 ';
@@ -597,9 +596,9 @@ if($is_private){
     $is_active = file_exists($group_file);
     $should_respond = ($is_active || $is_reply_to_bot || $is_mentioned);
     if(!empty($replying_to_user)){
-        $user_context = "\n([Plataforma: Telegram, Usuario: $user_name respondiendo a $replying_to_user, Grupo: ".$message['chat']['title']."])";
+        $user_context = "\n(INFO: [Plataforma: Telegram, Usuario: $user_name respondiendo a $replying_to_user, Grupo: ".$message['chat']['title']."])";
     }else{
-      $user_context = "\n([Plataforma: Telegram, Usuario: $user_name, Grupo: ".$message['chat']['title']."])";
+      $user_context = "\n(INFO: [Plataforma: Telegram, Usuario: $user_name, Grupo: ".$message['chat']['title']."])";
     }
 }
 
@@ -624,7 +623,9 @@ if(!empty($foundReactions)){
 
 if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audio_url))){
   if(rand(1,$REACT_PROB1)===1) setMessageReaction($randomReaction);
-    $enhanced_text = $clean_text.$web_search_context."\n".$user_context;
+    $enhanced_text = $user_context."
+
+".$clean_text.$web_search_context;
     $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url, $audio_url);
     $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "$SHAPE_NAME (tú, $BOT_USERNAME)"], trim($response));
     $formatted_response = formatForTelegram($new_response);
