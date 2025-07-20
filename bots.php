@@ -627,7 +627,7 @@ if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audi
 
 ".$clean_text.$web_search_context;
     $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url, $audio_url);
-    $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "$SHAPE_NAME (tú, $BOT_USERNAME)"], trim($response));
+    $new_response = str_replace(["$SHAPE_NAME:", $bot_mention, trim($enhanced_text)], ["", "$SHAPE_NAME (tú, $BOT_USERNAME)", ""], trim($response));
     $formatted_response = formatForTelegram($new_response);
 
     if(!empty($formatted_response) && $formatted_response != $SHAPE_NAME){
