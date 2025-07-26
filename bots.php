@@ -602,7 +602,7 @@ if($is_private){
 (["platform": "telegram", "group": "'.$message['chat']['title'].'"]';
     }
 }
-$user_context .= ' ["{user}" = "'.$user_name.'"])';
+$user_context .= ' ["{user}": "'.$user_name.'"])';
 
 $OReacts = [
   "Hol" => ["🖐️", "👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
