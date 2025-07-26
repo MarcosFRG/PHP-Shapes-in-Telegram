@@ -581,7 +581,7 @@ $clean_text = str_replace(["!reset", "!wack", "!imagine", "!info", "!web", "!sle
 if($is_private){
     $should_respond = true;
     $user_context = '
-(["platform": "telegram", "chat": "private"]';
+(["platform": "telegram", "chat": "private"';
 }elseif($is_group){
     $is_mentioned = (strpos($user_text, "@$BOT_USERNAME") !== false || strpos(strtolower($user_text), strtolower($SHAPE_NAME)));
     if(!$is_mentioned && !empty($Favorite_words) && is_array($Favorite_words)){
@@ -596,13 +596,13 @@ if($is_private){
     $should_respond = ($is_active || $is_reply_to_bot || $is_mentioned);
     if(!empty($replying_to_user)){
         $user_context = '
-(["platform": "telegram", "'.$user_name.' replying to '.$replying_to_user.'", "group": "'.$message["chat"]["title"].'"]';
+(["platform": "telegram", "'.$user_name.' replying to '.$replying_to_user.'", "group": "'.$message["chat"]["title"].'"';
     }else{
       $user_context = '
-(["platform": "telegram", "group": "'.$message['chat']['title'].'"]';
+(["platform": "telegram", "group": "'.$message['chat']['title'].'"';
     }
 }
-$user_context .= ' ["{user}": "'.$user_name.'"])';
+$user_context .= ', "{user}": "'.$user_name.'"])';
 
 $OReacts = [
   "Hol" => ["🖐️", "👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
