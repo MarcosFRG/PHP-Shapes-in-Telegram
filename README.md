@@ -5,7 +5,7 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 
 **Versiones de PHP:**
 - 7.4 (mínima)
-- 8.0 (recomendada)
+- 8.3 (recomendada, más rápida)
 
 ## Extensiones PHP necesarias:
 - cURL
