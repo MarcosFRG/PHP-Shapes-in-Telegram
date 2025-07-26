@@ -62,7 +62,6 @@ function formatForTelegram($text){
 
 function performWebSearch($query){
     global $SHAPES_API_KEY, $chat_id, $user_id, $SHAPE_USERNAME, $is_private, $using_key_id;
-    $tPr = $is_private ? $SHAPE_USERNAME."/" : 'tg/';
     $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
     $url = 'https://api.shapes.inc/v1/web/search';
     if(empty($chat_id)) $chat_id = -1;
@@ -71,7 +70,7 @@ function performWebSearch($query){
         'Content-Type: application/json',
         "X-User-Id: ".$tK.$user_id
     ];
-    if(!$is_private) $headers[] = "X-Channel-Id: ".$tPr.$chat_id;
+    if(!$is_private) $headers[] = "X-Channel-Id: tg/".$chat_id;
 
     $data = ['query' => $query, 'max_results' => 50];
 
@@ -142,17 +141,15 @@ function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null, 
 
 function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url = null){
     global $chat_id, $user_id, $SHAPE_USERNAME, $SHAPE_NAME, $SHAPES_API_KEY, $is_private, $user_name, $using_key_id;
-    $tPr = $is_private ? $SHAPE_USERNAME."/" : 'tg/';
     $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
     $url = 'https://api.shapes.inc/v1/chat/completions';
     if(empty($chat_id)) $chat_id = -1;
-
     $headers = [
         "Authorization: Bearer $SHAPES_API_KEY",
         'Content-Type: application/json',
         "X-User-Id: ".$tK.$user_id
     ];
-    if(!$is_private) $headers[] = "X-Channel-Id: ".$tPr.$chat_id;
+    if(!$is_private) $headers[] = "X-Channel-Id: tg/".$chat_id;
 
     sendChatAction();
 
@@ -234,7 +231,6 @@ function extractWebsiteContent($url){
 
 function generate_image_with_shapes($prompt, $api_key, $shape){
   global $chat_id, $user_id, $SHAPES_API_KEY, $SHAPE_USERNAME, $is_private, $using_key_id;
-    $tPr = $is_private ? $SHAPE_USERNAME."/" : 'tg/';
     $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
     $url = 'https://api.shapes.inc/v1/images/generate';
     if(empty($chat_id)) $chat_id = -1;
@@ -243,7 +239,7 @@ function generate_image_with_shapes($prompt, $api_key, $shape){
         'Content-Type: application/json',
         "X-User-Id: ".$tK.$user_id
     ];
-    if(!$is_private) $headers[] = "X-Channel-Id: ".$tPr.$chat_id;
+    if(!$is_private) $headers[] = "X-Channel-Id: tg/".$chat_id;
 
     $img_res = ['512x512', '1024x1024', '768x1024', '576x1024', '1024x768', '1024x576'];
 
