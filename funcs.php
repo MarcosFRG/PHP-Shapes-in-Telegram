@@ -60,55 +60,6 @@ function formatForTelegram($text){
     return $text;
 }
 
-function performWebSearch($query){
-    global $SHAPES_API_KEY, $chat_id, $user_id, $SHAPE_USERNAME, $is_private, $using_key_id;
-    $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
-    $url = 'https://api.shapes.inc/v1/web/search';
-    if(empty($chat_id)) $chat_id = -1;
-    $headers = [
-        "Authorization: Bearer $SHAPES_API_KEY",
-        'Content-Type: application/json',
-        "X-User-Id: ".$tK.$user_id
-    ];
-    if(!$is_private) $headers[] = "X-Channel-Id: tg/".$chat_id;
-
-    $data = ['query' => $query, 'max_results' => 50];
-
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_HTTPHEADER => $headers,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 10
-    ]);
-
-    $response = curl_exec($ch);
-    $error = curl_error($ch);
-    curl_close($ch);
-
-    if($error) return "Error en la búsqueda: $error";
-
-    $results = json_decode($response, true);
-    if (!$results || !isset($results['results'])) {
-        return "No se encontraron resultados";
-    }
-
-    $formatted_results = "";
-    foreach($results['results'] as $item){
-        $title = formatForTelegram($item['title'] ?? 'Sin título');
-        $snippet = formatForTelegram($item['snippet'] ?? 'Sin descripción');
-        $formatted_results .= "• [$title]({$item['url']})\n{$snippet}\n\n";
-
-        if(strlen($formatted_results) > 3000){
-            $formatted_results .= "[...]";
-            break;
-        }
-    }
-
-    return trim($formatted_results) ?: "No se encontraron resultados relevantes";
-}
-
 function getTelegramFileUrl($file_id){
     global $TELEGRAM_TOKEN;
     $file_info_url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/getFile?file_id=$file_id";

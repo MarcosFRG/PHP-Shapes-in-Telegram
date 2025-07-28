@@ -207,30 +207,21 @@ elseif(strpos($user_text, "/imagine$bot_mention") === 0){
 }
 // /web
 elseif(strpos($user_text, "/web$bot_mention") === 0){
-    $search_query = trim(str_replace("/web$bot_mention", "", $user_text));
+    $search_query = trim(str_replace("/web$bot_mention", "!web", $user_text));
 
     if(!empty($search_query)){
         sendChatAction();
 
-        $web_results = performWebSearch($search_query);
-        $context = "Resultados de búsqueda para \"$search_query\":\n$web_results";
+        $response = call_shapes_api_with_queue($search_query, $SHAPES_API_KEY, $SHAPE_USERNAME);
 
-        $response = call_shapes_api_with_queue(
-            "Responde a esto usando los resultados de la búsqueda: \"$search_query\".\n\n$context",
-            $SHAPES_API_KEY,
-            $SHAPE_USERNAME
-        );
-
-        $clean_response = str_replace($SHAPE_NAME.":", "", trim($response));
+        $clean_response = str_replace($SHAPE_NAME.":", "", $response);
         $formatted_response = formatForTelegram($clean_response);
 
         if(!empty($formatted_response)){
-            $is_group ? sendReply($message_id, $formatted_response) : sendMessage($formatted_response);
-        }else{
-            sendReply($message_id, "🔎 No obtuve una respuesta válida para \"$search_query\"");
+            $is_group?sendReply($message_id, $formatted_response):sendMessage($formatted_response);
         }
     }else{
-        sendReply($message_id, "Uso: /web".str_replace(["_", "-"], ["\_", "\-"], $bot_mention)." \[tu consulta\]");
+        sendReply($message_id, "Uso: /web".str_replace(["_", "-"], ["\_", "\-"], $bot_mention)." \[mensaje\]");
     }
     exit;
 }
@@ -250,7 +241,9 @@ elseif(strpos($user_text, "/http$bot_mention") === 0){
 
         if($website_content === false){
             $response = call_shapes_api_with_queue(
-                "No pude acceder al contenido de la URL: $url.",
+                "```HTTP
+No se puede acceder al contenido de la URL: $url.
+```",
                 $SHAPES_API_KEY,
                 $SHAPE_USERNAME
             );
@@ -258,7 +251,9 @@ elseif(strpos($user_text, "/http$bot_mention") === 0){
             // Enviar contenido a la shape
             $truncated_content = substr($website_content, 0, 15000);
             $response = call_shapes_api_with_queue(
-                "Contenido de '$url'.:\n\n$truncated_content",
+                "```HTTP
+Contenido de '$url'.:\n\n$truncated_content
+```",
                 $SHAPES_API_KEY,
                 $SHAPE_USERNAME
             );
@@ -555,7 +550,7 @@ if(isset($message['voice'])){
     $pdf = $parser->parseContent($doc_dlc);
     $doc_dlc = $pdf->getText();
     $doc_len = strlen($doc_dlc);
-    if($doc_len>1024*50){
+    if($doc_len>1024*$MAX_DOCSIZE){
     $doc_txt = '(Archivo \"'.$file_name.'\" demasiado grande - '.$doc_len.' caracteres)
 
 ';
@@ -599,7 +594,7 @@ if($is_private){
 (["platform": "telegram", "'.$user_name.' replying to '.$replying_to_user.'", "group": "'.$message["chat"]["title"].'"';
     }else{
       $user_context = '
-(["platform": "telegram", "group": "'.$message['chat']['title'].'"';
+(["platform": "telegram", "group": '.$message['chat']['title'].'"';
     }
 }
 $user_context .= ', "{user}": "'.$user_name.'"])';
@@ -631,7 +626,7 @@ if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audi
 ".$clean_text.$web_search_context;
     $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url, $audio_url);
     $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "@$SHAPE_NAME"], (strpos($response, $user_text)===1 ? str_replace(trim($user_text), "", trim($response)) : $response));
-    $nr_response = strpos($new_response, "\(INFO") ? preg_replace('/\([^)]*\)/', '', $new_response, 1) : $new_response;
+    $nr_response = strpos($new_response, "\([\"") ? preg_replace('/\([^)]*\)/', '', $new_response, 1) : $new_response;
     $formatted_response = formatForTelegram($nr_response);
 
     if(!empty($formatted_response) && $formatted_response != $SHAPE_NAME){
