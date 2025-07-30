@@ -30,7 +30,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 ## También puedes:
 - Renombrar la carpeta '**TuBot/**'.
 - Copiar la carpeta '**TuBot/**' con otro nombre para hacer otra shape, sin tener que subir todos los archivos de nuevo a otro servidor.
-- Cambiar los mensajes de inicio/error/activado/desactivado de la shape (puedes usar las etiquetas "{shape}" y "{user}").
+- Cambiar los mensajes de inicio/error/activado/desactivado de la shape (puedes usar las etiquetas "**{shape}**" y "**{user}**").
 
 ## Qué NO debes hacer:
 - Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
