@@ -2,6 +2,20 @@
 // Tu contraseña secreta para añadir comandos.
 $SITE_PASS = 'TU_CONTRASEÑA';
 
+// Mensaje inicial predeterminado.
+$DEFSTART_MSG = "✅";
+
+// Mensaje de error predeterminado.
+$DEFERROR_MSG = "Eh?";
+
+// Mensajes de activado y desactivado predeterminados.
+$DEFACTIVATE_MSG = "✅";
+$DEFDEACTIVATE_MSG = "❌";
+
+// Para comandos (se deben escapar caracteres especiales).
+$MDONLY_MSG = "❌ Este comando solo se puede usar en MD\.";
+$ADMINSONLY_MSG = "❌ Solo Admins";
+
 // Tamaño máximo de documentos en KiB (ten en cuenta que esto llena el contexto del modelo)
 $MAX_DOCSIZE = 10;
 

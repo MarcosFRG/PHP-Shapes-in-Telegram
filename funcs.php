@@ -75,7 +75,7 @@ function getTelegramFileUrl($file_id){
 function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null, $audio_url = null){
   global $MAX_ATTEMPTS;
     $attempt = 0;
-    $result = "Eh? (Error desconocido)";
+    $result = "$ERROR_MSG (Error desconocido)";
 
     while($attempt < $MAX_ATTEMPTS){
         $result = call_shapes_api($text, $api_key, $shape, $image_url, $audio_url);
@@ -91,7 +91,7 @@ function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null, 
 }
 
 function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url = null){
-    global $chat_id, $user_id, $SHAPE_USERNAME, $SHAPE_NAME, $SHAPES_API_KEY, $is_private, $user_name, $using_key_id;
+    global $chat_id, $user_id, $SHAPE_USERNAME, $SHAPE_NAME, $SHAPES_API_KEY, $is_private, $user_name, $using_key_id, $bot_action;
     $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
     $url = 'https://api.shapes.inc/v1/chat/completions';
     if(empty($chat_id)) $chat_id = -1;
@@ -102,7 +102,7 @@ function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url 
     ];
     if(!$is_private) $headers[] = "X-Channel-Id: tg/".$chat_id;
 
-    sendChatAction();
+    if($bot_action==0) sendChatAction();
 
     $content = [];
 
@@ -133,20 +133,20 @@ function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url 
 
     if(curl_errno($ch)){
         curl_close($ch);
-        return "Eh? (Error de conexión)";
+        return "$ERROR_MSG (Error de conexión)";
     }
 
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
     if($http_code == 429){
-        return "Eh? (Error 429 - Demasiadas solicitudes, el máximo global es *20* por minuto\.)";
+        return "$ERROR_MSG (Error 429 - Demasiadas solicitudes, el máximo global es *20* por minuto\.)";
     }elseif($http_code != 200){
-        return "Eh? (Error $http_code)";
+        return "$ERROR_MSG (Error $http_code)";
     }
 
     $json_response = json_decode($response, true);
-    if(!$json_response || !isset($json_response['choices'][0]['message']['content'])) return "Eh? (Respuesta inválida)";
+    if(!$json_response || !isset($json_response['choices'][0]['message']['content'])) return "$ERROR_MSG (Respuesta inválida)";
 
     return $json_response['choices'][0]['message']['content'];
 }
@@ -185,6 +185,7 @@ function generate_image_with_shapes($prompt, $api_key, $shape){
     $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
     $url = 'https://api.shapes.inc/v1/images/generate';
     if(empty($chat_id)) $chat_id = -1;
+    sendChatAction('upload_photo');
     $headers = [
         "Authorization: Bearer $SHAPES_API_KEY",
         'Content-Type: application/json',
@@ -321,6 +322,7 @@ function sendChatAction($action = 'typing') {
     $valid_actions = ['typing', 'upload_photo', 'record_video', 'upload_video', 'record_voice', 'upload_voice', 'upload_document', 'choose_sticker', 'find_location'];
 
     if(!in_array($action, $valid_actions)) $action = 'typing';
+    $bot_action = 1;
 
     $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendChatAction";
     $postData = http_build_query(['chat_id' => $chat_id, 'action' => $action]);
@@ -357,13 +359,8 @@ function sendChatAction($action = 'typing') {
         );
 
         if($fp){
-            $out = "POST $path HTTP/1.1\r\n";
-            $out .= "Host: $host\r\n";
-            $out .= "Content-Type: application/x-www-form-urlencoded\r\n";
-            $out .= "Content-Length: ".strlen($postData)."\r\n";
-            $out .= "Connection: Close\r\n\r\n";
-            $out .= $postData;
-            
+            $out = "POST $path HTTP/1.1\r\nHost: $host\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: ".strlen($postData)."\r\nConnection: Close\r\n\r\n$postData";
+
             fwrite($fp, $out);
             fclose($fp);
         }
