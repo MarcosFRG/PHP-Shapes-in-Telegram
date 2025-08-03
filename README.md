@@ -52,6 +52,10 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Comandos de juegos.
 - [ ] Comandos de moderación.
 
+### También puedes (por ahora):
+- [X] Registrar tus propias Shape Keys.
+- [ ] Registrar tu cuenta de Shapes.
+
 ## Solución de problemas
 - **Error 500**: Verifica que las extensiones PHP estén activadas.
 - **Webhook no funciona**: Asegúrate de que tu servidor tenga SSL válido.
