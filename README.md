@@ -14,6 +14,7 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 - OpenSSL
 - BCMath
 - PDFParser (viene incluído)
+- OpenSSL
 
 ##### (Hostings como x10Hosting ya tienen todas instaladas)
 
