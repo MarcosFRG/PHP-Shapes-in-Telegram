@@ -91,7 +91,7 @@ function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null, 
 }
 
 function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url = null){
-    global $chat_id, $user_id, $SHAPE_USERNAME, $SHAPE_NAME, $SHAPES_API_KEY, $is_private, $user_name, $using_key_id, $bot_action;
+    global $chat_id, $user_id, $SHAPE_USERNAME, $SHAPE_NAME, $SHAPES_API_KEY, $is_private, $using_key_id, $bot_action;
     $tK = empty($using_key_id) ? 'tu/' : base64_encode($SHAPES_API_KEY)."/";
     $url = 'https://api.shapes.inc/v1/chat/completions';
     if(empty($chat_id)) $chat_id = -1;
@@ -591,5 +591,20 @@ function isValidEmoji($emoji){
     $emoji_pattern = '/^[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{1F700}-\x{1F77F}\x{1F780}-\x{1F7FF}\x{1F800}-\x{1F8FF}\x{1F900}-\x{1F9FF}\x{1FA00}-\x{1FA6F}\x{1FA70}-\x{1FAFF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}\x{FE0E}\x{FE0F}\x{1F1E6}-\x{1F1FF}]+$/u';
 
     return preg_match($emoji_pattern, $emoji);
+}
+
+function OpenSSL_Enc($texto){
+  global $ENC_KEY;
+  $iv = openssl_random_pseudo_bytes(16);
+  $textoCifrado = openssl_encrypt($texto, 'AES-256-CBC', $ENC_KEY, 0, $iv);
+  return base64_encode($iv.$textoCifrado);
+}
+
+function OpenSSL_Dec($textoCifrado){
+  global $ENC_KEY;
+  $datos = base64_decode($textoCifrado);
+  $iv = substr($datos, 0, 16);
+  $textoCifrado = substr($datos, 16);
+  return openssl_decrypt($textoCifrado, 'AES-256-CBC', $ENC_KEY, 0, $iv);
 }
 ?>

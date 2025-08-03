@@ -5,7 +5,7 @@ require "../funcs.php";
 ini_set('max_execution_time', 60);
 set_time_limit(60);
 
-global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention;
+// global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention;
 $MAX_RETRIES = 3;
 $MAX_ATTEMPTS = 10;
 $REQUEST_DELAY = 2;
@@ -38,7 +38,7 @@ if($callback_query){
     if(file_exists($keys_file)){
         $keys_data = json_decode(file_get_contents($keys_file), true);
     }
-    if(!empty($using_key_id)) $SHAPES_API_KEY = base64_decode($keys_data[$using_key_id]['key']);
+    if(!empty($using_key_id)) $SHAPES_API_KEY = OpenSSL_Dec($keys_data[$using_key_id]['key']);
 
     answerCallbackQuery($callback_query['id']);
 
@@ -83,7 +83,7 @@ if(file_exists($keys_file)){
     $keys_data = json_decode(file_get_contents($keys_file), true);
 }
 
-if(!empty($using_key_id)) $SHAPES_API_KEY = base64_decode($keys_data[$using_key_id]['key']);
+if(!empty($using_key_id)) $SHAPES_API_KEY = OpenSSL_Dec($keys_data[$using_key_id]['key']);
 
 $is_reply_to_bot = false;
 $replying_to_user = "";
@@ -293,7 +293,7 @@ if(count($lines) == 3){
     $new_id = strval(count($keys_data)+ 1);
 
     // Guardar la nueva key
-    $keys_data[$new_id] = ["name" => $custom_name, "key" => base64_encode($api_key)];
+    $keys_data[$new_id] = ["name" => $custom_name, "key" => OpenSSL_Enc($api_key)];
 
     // Escribir en el archivo
     file_put_contents($keys_file, json_encode($keys_data, JSON_PRETTY_PRINT));
@@ -320,7 +320,7 @@ elseif(strpos($user_text, "/mykeys$bot_mention") === 0){
     foreach($keys_data as $key_id => $key_info){
       $keys_str .= "
 
-    $key_id\. `".$key_info["name"]."`  →  `".base64_decode($key_info["key"])."`";
+    $key_id\. `".$key_info["name"]."`  →  `".OpenSSL_Dec($key_info["key"])."`";
     }
     $using_key = $keys_data[file_get_contents("../users/$user_id/$SHAPE_USERNAME.txt")]["name"];
     $using_key = empty($using_key)?"T":"Actualmente estoy usando `$using_key`, y t";
@@ -448,10 +448,10 @@ elseif(strpos($user_text, "/editkey$bot_mention") === 0){
         // Verificar si existe la key
         if(isset($keys_data[$key_id])){
             $old_name = $keys_data[$key_id]['name'];
-            $old_key = base64_decode($keys_data[$key_id]['key']);
+            $old_key = OpenSSL_Dec($keys_data[$key_id]['key']);
 
             // Actualizar los datos
-            $keys_data[$key_id] = ["name" => $new_name, "key" => base64_encode($new_key)];
+            $keys_data[$key_id] = ["name" => $new_name, "key" => OpenSSL_Enc($new_key)];
 
             file_put_contents($keys_file, json_encode($keys_data, JSON_PRETTY_PRINT));
 
@@ -602,7 +602,7 @@ if(!empty($foundReactions)){
 }
 
 if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audio_url))){
-  if($is_group && rand(1,$REACT_PROB1) === 1)setMessageReaction($randomReaction);
+  if($is_group && rand(1,$REACT_PROB1) === 1) setMessageReaction($randomReaction);
     $enhanced_text = $user_context."
 
 ".$clean_text.$web_search_context;
