@@ -2,6 +2,9 @@
 // Tu contraseña secreta para añadir comandos.
 $SITE_PASS = 'TU_CONTRASEÑA';
 
+// Tu clave secreta para guardar Shape Keys.
+$ENC_KEY = 'TU_CLAVE_SECRETA';
+
 // Mensaje inicial predeterminado.
 $DEFSTART_MSG = "✅";
 
@@ -27,4 +30,5 @@ $REACT_PROB1 = 15;
 
 // Probabilidad de que añada una reacción a mensajes no dirijidos a este (actual: 1/40)
 $REACT_PROB2 = 40;
+
 ?>
