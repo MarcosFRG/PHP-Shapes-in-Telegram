@@ -92,14 +92,14 @@ function call_shapes_api_with_queue($text, $api_key, $shape, $image_url = null, 
 
 function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url = null){
     global $chat_id, $user_id, $SHAPE_USERNAME, $SHAPE_NAME, $is_private, $using_key_id, $bot_action, $ERROR_MSG;
-    $tK = $using_key_id==false ? 'tu/' : base64_encode($api_key)."/";
+    $tK = $using_key_id==false ? 'tu-' : base64_encode($api_key)."-";
     $url = 'https://api.shapes.inc/v1/chat/completions';
     if(empty($chat_id)) $chat_id = -1;
     $headers = [
         "Authorization: Bearer $api_key",
         'Content-Type: application/json',
         "X-User-Id: ".$tK.$user_id,
-        "X-Channel-Id: ".($is_private?base64_encode($shape):'tg')."/".$chat_id
+        "X-Channel-Id: ".($is_private?base64_encode($shape):'tg')."-".$chat_id
     ];
 
     if($bot_action==0) sendChatAction();
@@ -182,7 +182,7 @@ function extractWebsiteContent($url){
 
 function generate_image_with_shapes($prompt, $api_key, $shape){
   global $chat_id, $user_id,  $SHAPE_USERNAME, $is_private, $using_key_id;
-    $tK = empty($using_key_id) ? 'tu/' : base64_encode($api_key)."/";
+    $tK = empty($using_key_id) ? 'tu-' : base64_encode($api_key)."-";
     $url = 'https://api.shapes.inc/v1/images/generate';
     if(empty($chat_id)) $chat_id = -1;
     sendChatAction('upload_photo');
@@ -190,7 +190,7 @@ function generate_image_with_shapes($prompt, $api_key, $shape){
         "Authorization: Bearer $api_key",
         'Content-Type: application/json',
         "X-User-Id: ".$tK.$user_id,
-        "X-Channel-Id: ".($is_private?base64_encode($shape):'tg')."/".$chat_id
+        "X-Channel-Id: ".($is_private?base64_encode($shape):'tg')."-".$chat_id
     ];
 
     $img_res = ['512x512', '1024x1024', '768x1024', '576x1024', '1024x768', '1024x576'];

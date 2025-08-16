@@ -5,7 +5,7 @@ require "../funcs.php";
 ini_set('max_execution_time', 60);
 set_time_limit(60);
 
-// global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention;
+global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention;
 $MAX_RETRIES = 3;
 $MAX_ATTEMPTS = 10;
 $REQUEST_DELAY = 2;
@@ -17,6 +17,7 @@ if(empty($START_MSG)) $START_MSG=$DEFSTART_MSG;
 if(empty($ERROR_MSG)) $ERROR_MSG=$DEFERROR_MSG;
 if(empty($ACTIVATE_MSG)) $ACTIVATE_MSG=$DEFACTIVATE_MSG;
 if(empty($DEACTIVATE_MSG)) $DEACTIVATE_MSG=$DEFDEACTIVATE_MSG;
+if(strpos($ADMINSONLY_MSG, "\\") == false) $ADMINSONLY_MSG = formatForTelegram($ADMINSONLY_MSG);
 
 if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 
@@ -122,8 +123,7 @@ if($is_group){
 
 if(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/wack$bot_mention") === 0){
   if($is_group && !isUserAdmin()){
-    $response = $ADMINSONLY_MSG;
-    sendReply($message_id, $response);
+    sendReply($message_id, $ADMINSONLY_MSG);
     exit;
   }
   $reply = formatForTelegram(call_shapes_api_with_queue('!wack', $SHAPES_API_KEY, $SHAPE_USERNAME));
@@ -607,7 +607,7 @@ if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audi
 
 ".$clean_text.$web_search_context;
     $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url, $audio_url);
-    $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "@$SHAPE_NAME"],(strpos($response, $user_text) === 1?str_replace(trim($user_text), "", trim($response)):$response));
+    $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "@$SHAPE_NAME"],(strpos($response, $user_text) === 0?str_replace(trim($user_text), "", trim($response)):$response));
     $nr_response = strpos($new_response, "\([\"")?preg_replace('/\([^)]*\)/', '', $new_response, 1):$new_response;
     $formatted_response = formatForTelegram($nr_response);
 
