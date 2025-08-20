@@ -605,7 +605,7 @@ if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audi
   if($is_group && rand(1,$REACT_PROB1) === 1) setMessageReaction($randomReaction);
     $enhanced_text = $user_context."
 
-".$clean_text.$web_search_context;
+".$clean_text;
     $response = call_shapes_api_with_queue($enhanced_text, $SHAPES_API_KEY, $SHAPE_USERNAME, $image_url, $audio_url);
     $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "@$SHAPE_NAME"],(strpos($response, $user_text) === 0?str_replace(trim($user_text), "", trim($response)):$response));
     $nr_response = strpos($new_response, "\([\"")?preg_replace('/\([^)]*\)/', '', $new_response, 1):$new_response;
