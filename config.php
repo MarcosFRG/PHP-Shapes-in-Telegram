@@ -16,7 +16,7 @@ $HELP_CMD = "*Comandos de {shape}*:
 /register - Registra una de tus Shape Keys para evitar el Error 429 (Demasiadas solicitudes) *(MD)*
 /mykeys - Muestra tus Shape Keys registradas. *(MD)*
 /setkey - Haz que {shape} use una de tus Shape Keys en respuestas para ti.
-/editkey - Edita una de tus Shape Keys registradas.
+/editkey - Edita una de tus Shape Keys registradas. *(MD)*
 /deletekey - Elimina una de tus Shape Keys registradas.
 
 /freewill - Deja que {shape} reaccione y responda cuando quiera.
@@ -54,4 +54,5 @@ $REACT_PROB1 = 15;
 
 // Probabilidad de que añada una reacción a mensajes no dirijidos a este (actual: 1/40)
 $REACT_PROB2 = 40;
+
 ?>
