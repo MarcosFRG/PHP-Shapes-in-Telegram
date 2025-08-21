@@ -1,4 +1,9 @@
 <?php
+function replaceVars($txt){
+  global $SHAPE_NAME, $user_name;
+  return str_replace(["{shape}", "{user}"], [$SHAPE_NAME, $user_name], $txt);
+}
+
 function isUserAdmin(){
     global $TELEGRAM_TOKEN, $chat_id, $user_id;
 

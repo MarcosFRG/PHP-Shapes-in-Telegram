@@ -10,16 +10,23 @@ $MAX_RETRIES = 3;
 $MAX_ATTEMPTS = 10;
 $REQUEST_DELAY = 2;
 $ACTIVATION_FOLDER = 'Activated';
+$FREEWILL_FOLDER = 'No_Free-will';
 
 $bot_action = 0;
+
+if(!isset($EXTRA_HELP)) $EXTRA_HELP = '';
+$EXTRA_HELP .= ($SHAPE_COMMAND_DICE==true?"
+/dice - Lanza un dado.":'').($SHAPE_COMMAND_8BALL==true?"
+/8ball - ¡Recibe una respuesta mágica!":'');
 
 if(empty($START_MSG)) $START_MSG=$DEFSTART_MSG;
 if(empty($ERROR_MSG)) $ERROR_MSG=$DEFERROR_MSG;
 if(empty($ACTIVATE_MSG)) $ACTIVATE_MSG=$DEFACTIVATE_MSG;
 if(empty($DEACTIVATE_MSG)) $DEACTIVATE_MSG=$DEFDEACTIVATE_MSG;
-if(strpos($ADMINSONLY_MSG, "\\") == false) $ADMINSONLY_MSG = formatForTelegram($ADMINSONLY_MSG);
+if(strpos($ADMINSONLY_MSG, "\\") === false) $ADMINSONLY_MSG = formatForTelegram($ADMINSONLY_MSG);
 
 if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
+if(!file_exists($FREEWILL_FOLDER)) mkdir($FREEWILL_FOLDER, 0777, true);
 
 $php_input = file_get_contents('php://input');
 $update = json_decode($php_input, true);
@@ -44,11 +51,23 @@ if($callback_query){
     answerCallbackQuery($callback_query['id']);
 
     switch($callback_data){
-      case "reset_0":
-        deleteMessage($chat_id, $callback_message_id);
+      case "fw_1":
+        if(file_exists("$FREEWILL_FOLDER/$chat_id-$user_id.txt")){
+          unlink("$FREEWILL_FOLDER/$chat_id-$user_id.txt");
+        }
+        editMessageText($chat_id, $callback_message_id, "¡Free\-will activado\!");
         break;
-      case "reset_1":
+      case "fw_0":
+        if(!file_exists("$FREEWILL_FOLDER/$chat_id-$user_id.txt")){
+          file_put_contents("$FREEWILL_FOLDER/$chat_id-$user_id.txt","");
+        }
+        editMessageText($chat_id, $callback_message_id, "¡Free\-Will desactivado\!");
+        break;
+      case "reset":
         editMessageText($chat_id, $callback_message_id, formatForTelegram(call_shapes_api_with_queue('!reset', $SHAPES_API_KEY, $SHAPE_USERNAME)));
+        break;
+      case "delete":
+        deleteMessage($chat_id, $callback_message_id);
     }
     exit;
 }
@@ -61,17 +80,30 @@ $is_private = ($chat_type === 'private');
 $is_group = ($chat_type === 'group' || $chat_type === 'supergroup');
 $group_file = "$ACTIVATION_FOLDER/$chat_id.txt";
 
+$is_free = !file_exists("$FREEWILL_FOLDER/$chat_id-$user_id.txt");
+
 $user = $message['from'];
 $user_name = (string)$user['first_name'] ?? 'Desconocido';
 $user_id = (string)$user['id'];
 
-$START_MSG = formatForTelegram(str_replace(["{shape}", "{user}"], [$SHAPE_NAME, $user_name], $START_MSG));
-$ERROR_MSG = formatForTelegram(str_replace(["{shape}", "{user}"], [$SHAPE_NAME, $user_name], $ERROR_MSG));
-$ACTIVATE_MSG = formatForTelegram(str_replace(["{shape}", "{user}"], [$SHAPE_NAME, $user_name], $ACTIVATE_MSG));
-$DEACTIVATE_MSG = formatForTelegram(str_replace(["{shape}", "{user}"], [$SHAPE_NAME, $user_name], $DEACTIVATE_MSG));
+$START_MSG = formatForTelegram(replaceVars($START_MSG));
+$ERROR_MSG = formatForTelegram(replaceVars($ERROR_MSG));
+$ACTIVATE_MSG = formatForTelegram(replaceVars($ACTIVATE_MSG));
+$DEACTIVATE_MSG = formatForTelegram(replaceVars($DEACTIVATE_MSG));
 
-if($is_private && trim($user_text) == "/start"){
-  sendMessage($START_MSG); 
+$bot_mention = $is_group?"@$BOT_USERNAME":'';
+
+if(trim($user_text) == "/start$bot_mention"){
+  if($is_private){
+    sendMessage($START_MSG);
+  }else{
+    setMessageReaction("👍");
+  }
+  exit;
+}elseif(trim($user_text) == "/help$bot_mention"){
+  $response = formatForTelegram(replaceVars("$HELP_CMD
+$EXTRA_HELP"));
+  $is_private?sendMessage($response):sendReply($message_id, $response);
   exit;
 }
 
@@ -94,8 +126,6 @@ if(isset($message['reply_to_message'])){
 
     if(!$is_reply_to_bot) $replying_to_user = $reply_from['first_name'] ?? 'Usuario';
 }
-
-$bot_mention = $is_group?"@$BOT_USERNAME":'';
 
 if($is_group && strpos($user_text, "/") === 0 && (strpos($user_text, "@") < 2 || strpos($user_text, $BOT_USERNAME) === false)) exit;
 
@@ -137,9 +167,33 @@ elseif(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/res
         exit;
     }
 
-    $keyboard = ['inline_keyboard' => [[['text' => '✅ Sí', 'callback_data' => 'reset_1'], ['text' => '❌ No',  'callback_data' => 'reset_0']]]];
+    $keyboard = ['inline_keyboard' => [[['text' => '✅ Sí', 'callback_data' => 'reset'], ['text' => '❌ No',  'callback_data' => 'delete']]]];
 
-    $confirm_message = "¿Estás segur@ de que quieres *borrar la memoria de ". formatForTelegram($SHAPE_NAME)."* en este chat *para siempre*?";
+    $confirm_message = "¿Estás segur@ de que quieres *borrar la memoria de ". formatForTelegram($SHAPE_NAME)."* en este ".($is_private?'MD':'chat')." *para siempre*?";
+
+    $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage";
+    $data = ['chat_id' => $chat_id, 'reply_to_message_id' => $message_id, 'text' => $confirm_message, 'parse_mode' => 'MarkdownV2', 'reply_markup' => json_encode($keyboard)];
+  
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    exit;
+}
+// /freewill
+elseif(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/freewill$bot_mention") === 0){
+    if($is_group && !isUserAdmin()){
+        sendReply($message_id, $ADMINSONLY_MSG);
+        exit;
+    }
+
+    $keyboard = ['inline_keyboard' => [[['text' => '✅ Sí', 'callback_data' => 'fw_1'], ['text' => '❌ No',  'callback_data' => 'fw_0']]]];
+
+    $confirm_message = "¿Quieres activar el Free\-will de *".formatForTelegram($SHAPE_NAME)."* en este ".($is_private?'MD':'chat')."?";
 
     $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage";
     $data = ['chat_id' => $chat_id, 'reply_to_message_id' => $message_id, 'text' => $confirm_message, 'parse_mode' => 'MarkdownV2', 'reply_markup' => json_encode($keyboard)];
@@ -563,7 +617,7 @@ if($is_private){
     $should_respond = true;
     $user_context .= 'chat": "private';
 }elseif($is_group){
-    $is_mentioned = (strpos($user_text, "@$BOT_USERNAME")!== false || strpos(strtolower($user_text), strtolower($SHAPE_NAME)));
+    $is_mentioned = strpos($user_text, "@$BOT_USERNAME")!== false || strpos(strtolower($user_text), strtolower($SHAPE_NAME)) && $is_free;
     if(!$is_mentioned && !empty($Favorite_words) && is_array($Favorite_words)){
       foreach($Favorite_words as $word){
     if(preg_match("/\b".preg_quote($word, '/')."\b/i", $user_text)){
@@ -585,7 +639,8 @@ $user_context .= '", "{user}": "'.$user_name.'"])';
 $OReacts = [
 "Hol" => ["👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
 "Adi" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
-"Bye" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"]
+"Bye" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
+$SHAPE_NAME => ["🔥", "👻"]
 ];
 
 // Reacción
@@ -602,7 +657,7 @@ if(!empty($foundReactions)){
 }
 
 if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audio_url))){
-  if($is_group && rand(1,$REACT_PROB1) === 1) setMessageReaction($randomReaction);
+  if($is_free && $is_group && rand(1,$REACT_PROB1) === 1) setMessageReaction($randomReaction);
     $enhanced_text = $user_context."
 
 ".$clean_text;

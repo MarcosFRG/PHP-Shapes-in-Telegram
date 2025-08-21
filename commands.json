@@ -1,77 +1,92 @@
 [
-    {
-        "name": "activate",
-        "description": "Activa a {shape} en un grupo",
-        "variable": ""
-    },
-    {
-        "name": "deactivate",
-        "description": "Desactiva a {shape} en un grupo",
-        "variable": ""
-    },
-    {
-        "name": "register",
-        "description": "Registra una API Key de Shapes en MFRG Shapes (seguro, solo para ti)",
-        "variable": ""
-    },
-    {
-        "name": "mykeys",
-        "description": "Ver tus API Keys registradas",
-        "variable": ""
-    },
-    {
-        "name": "setkey",
-        "description": "Usar una de tus API Keys registradas en este bot",
-        "variable": ""
-    },
-    {
-        "name": "editkey",
-        "description": "Edita una de tus API Keys registradas",
-        "variable": ""
-    },
-    {
-        "name": "deletekey",
-        "description": "Elimina una de tus API Keys registradas",
-        "variable": ""
-    },
-    {
-        "name": "web",
-        "description": "Busca en internet",
-        "variable": ""
-    },
-    {
-        "name": "wack",
-        "description": "Borra la memoria a corto plazo",
-        "variable": ""
-    },
-    {
-        "name": "reset",
-        "description": "Borra la memoria a largo plazo",
-        "variable": ""
-    },
-    {
-        "name": "sleep",
-        "description": "Crea una nueva memoria a largo plazo",
-        "variable": ""
-    },
-    {
-        "name": "imagine",
-        "description": "Genera una imagen",
-        "variable": ""
-    },
-    {
-        "name": "http",
-        "description": "Entra a una URL",
-        "variable": ""
-    },
-    {
-        "name": "dice",
-        "description": "Lanza un dado",
-        "variable": "SHAPE_COMMAND_DICE"
-    },
-    {
-        "name": "8ball",
-        "description": "\u00a1Obt\u00e9n una respuesta m\u00e1gica!",
-        "variable": "SHAPE_COMMAND_8BALL"
-    }
+  {
+    "name": "start",
+    "description": "Verifica si {shape} está en línea",
+    "variable": ""
+  },
+  {
+    "name": "help",
+    "description": "Información sobre los comandos",
+    "variable": ""
+  },
+  {
+    "name": "activate",
+    "description": "Activa a {shape} en un grupo",
+    "variable": ""
+  },
+  {
+    "name": "deactivate",
+    "description": "Desactiva a {shape} en un grupo",
+    "variable": ""
+  },
+  {
+    "name": "register",
+    "description": "Registra una API Key de Shapes (seguro, solo para ti)",
+    "variable": ""
+  },
+  {
+    "name": "mykeys",
+    "description": "Ver tus API Keys registradas",
+    "variable": ""
+  },
+  {
+    "name": "setkey",
+    "description": "Usar una de tus API Keys registradas en este bot",
+    "variable": ""
+  },
+  {
+    "name": "editkey",
+    "description": "Edita una de tus API Keys registradas",
+    "variable": ""
+  },
+  {
+    "name": "deletekey",
+    "description": "Elimina una de tus API Keys registradas",
+    "variable": ""
+  },
+  {
+    "name": "freewill",
+    "description": "Dale a {shape} la posibilidad de hablar o reaccionar cuando quiera",
+    "variable": ""
+  },
+  {
+    "name": "web",
+    "description": "Busca en internet",
+    "variable": ""
+  },
+  {
+    "name": "wack",
+    "description": "Borra la memoria a corto plazo",
+    "variable": ""
+  },
+  {
+    "name": "reset",
+    "description": "Borra la memoria a largo plazo",
+    "variable": ""
+  },
+  {
+    "name": "sleep",
+    "description": "Crea una nueva memoria a largo plazo",
+    "variable": ""
+  },
+  {
+    "name": "imagine",
+    "description": "Genera una imagen",
+    "variable": ""
+  },
+  {
+    "name": "http",
+    "description": "Entra a una URL",
+    "variable": ""
+  },
+  {
+    "name": "dice",
+    "description": "Lanza un dado",
+    "variable": "SHAPE_COMMAND_DICE"
+  },
+  {
+    "name": "8ball",
+    "description": "¡Obtén una respuesta mágica!",
+    "variable": "SHAPE_COMMAND_8BALL"
+  }
 ]
