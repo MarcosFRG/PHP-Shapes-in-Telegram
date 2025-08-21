@@ -386,11 +386,6 @@ elseif(strpos($user_text, "/mykeys$bot_mention") === 0){
 }
 // /setkey
 elseif(strpos($user_text, "/setkey") === 0){
-    if($is_group){
-        sendReply($message_id, $MDONLY_MSG);
-        exit;
-    }
-
     $parts = explode(" ", $user_text);
     if(count($parts) >= 2){
         $key_id = trim($parts[1]);
