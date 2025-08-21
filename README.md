@@ -51,6 +51,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Responder a menciones (solo si el bot es administrador, aunque no tenga permisos).
 - [X] Comandos de juegos.
 - [ ] Comandos de moderación.
+- [X] Free-will (no terminado).
 
 ### También puedes (por ahora):
 - [X] Registrar tus propias Shape Keys.
