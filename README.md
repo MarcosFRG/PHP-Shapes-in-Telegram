@@ -48,10 +48,10 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 
 ### El shape bot puede/tiene:
 - [X] Responder a preguntas de usuarios.
-- [X] Responder a menciones (solo si el bot es administrador, aunque no tenga permisos).
+- [X] Responder a menciones (solo si el bot es administrador, aunque no tenga permisos)
 - [X] Comandos de juegos.
+- [X] Free-will (no terminado)
 - [ ] Comandos de moderación.
-- [X] Free-will (no terminado).
 
 ### También puedes (por ahora):
 - [X] Registrar tus propias Shape Keys.
