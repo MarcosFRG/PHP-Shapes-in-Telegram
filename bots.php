@@ -52,12 +52,20 @@ if($callback_query){
 
     switch($callback_data){
       case "fw_1":
+        if(!$is_private && !isUserAdmin() && $FW_EVERYONE != true){
+          sendMessage($ADMINSONLY_MSG);
+          exit;
+        }
         if(file_exists("$FREEWILL_FOLDER/$chat_id.txt")){
           unlink("$FREEWILL_FOLDER/$chat_id.txt");
         }
         editMessageText($chat_id, $callback_message_id, "¡Free\-will activado\!");
         break;
       case "fw_0":
+        if(!$is_private && !isUserAdmin() && $FW_EVERYONE != true){
+          sendMessage($ADMINSONLY_MSG);
+          exit;
+        }
         if(!file_exists("$FREEWILL_FOLDER/$chat_id.txt")){
           file_put_contents("$FREEWILL_FOLDER/$chat_id.txt","");
         }
@@ -151,7 +159,7 @@ if($is_group){
     }
 }
 
-if(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/wack$bot_mention") === 0){
+if(($is_group || $is_private) && strpos($user_text, "/wack$bot_mention") === 0){
   if($is_group && !isUserAdmin()){
     sendReply($message_id, $ADMINSONLY_MSG);
     exit;
@@ -161,7 +169,7 @@ if(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/wack$bo
   exit;
 }
 // /reset
-elseif(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/reset$bot_mention") === 0){
+elseif(($is_group || $is_private) && strpos($user_text, "/reset$bot_mention") === 0){
     if($is_group && !isUserAdmin()){
         sendReply($message_id, $ADMINSONLY_MSG);
         exit;
@@ -185,8 +193,8 @@ elseif(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/res
     exit;
 }
 // /freewill
-elseif(((isUserAdmin() && $is_group) || $is_private) && strpos($user_text, "/freewill$bot_mention") === 0){
-    if($is_group && !isUserAdmin()){
+elseif(($is_group || $is_private) && strpos($user_text, "/freewill$bot_mention") === 0){
+    if($is_group && !isUserAdmin() && $FW_EVERYONE != true){
         sendReply($message_id, $ADMINSONLY_MSG);
         exit;
     }

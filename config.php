@@ -19,7 +19,7 @@ $HELP_CMD = "*Comandos de {shape}*:
 /editkey - Edita una de tus Shape Keys registradas. *(MD)*
 /deletekey - Elimina una de tus Shape Keys registradas.
 
-/freewill - Deja que {shape} reaccione y responda cuando quiera.
+/freewill - Deja que {shape} reaccione y responda cuando quiera. (activado por defecto)
 /web - Haz que {shape} pueda buscar en la web y responderte con datos actualizados.
 /wack - Borra la memoria a corto plazo de {shape}.
 /reset - Borra la memoria a largo plazo de {shape}.
@@ -39,7 +39,7 @@ $DEFERROR_MSG = "Eh?";
 $DEFACTIVATE_MSG = "✅";
 $DEFDEACTIVATE_MSG = "❌";
 
-// Para comandos (se deben escapar caracteres especiales)
+// Para comandos (se deben escapar caracteres especiales).
 $MDONLY_MSG = "❌ Este comando solo se puede usar en MD\.";
 $ADMINSONLY_MSG = "❌ Solo Admins";
 
@@ -50,11 +50,14 @@ $MAX_DOCSIZE = 10;
 $MAX_PDFSIZE = 100;
 
 // Probabilidad de que el bot responda sin llamarlo (Free-Will)
-$ANSWER_PROB = 80;
+$ANSWER_PROB = 200;
+
+// Free-Will controlable por todos.
+$FW_EVERYONE = false;
 
 // Probabilidad de que el bot añada una reacción a mensajes dirijidos a este (actual: 1/15)
-$REACT_PROB1 = 15;
+$REACT_PROB1 = 30;
 
 // Probabilidad de que añada una reacción a mensajes no dirijidos a este (actual: 1/40)
-$REACT_PROB2 = 40;
+$REACT_PROB2 = 80;
 ?>
