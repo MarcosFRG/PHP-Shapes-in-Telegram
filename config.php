@@ -15,7 +15,7 @@ $HELP_CMD = "*Comandos de {shape}*:
 
 /register - Registra una de tus Shape Keys para evitar el Error 429 (Demasiadas solicitudes) *(MD)*
 /mykeys - Muestra tus Shape Keys registradas. *(MD)*
-/setkey - Haz que {shape} use una de tus Shape Keys en respuestas para ti.
+/setkey - Haz que {shape} use una de tus Shape Keys en sus respuestas solamente para ti.
 /editkey - Edita una de tus Shape Keys registradas. *(MD)*
 /deletekey - Elimina una de tus Shape Keys registradas.
 
@@ -26,6 +26,7 @@ $HELP_CMD = "*Comandos de {shape}*:
 /sleep - Genera una nueva memoria a largo plazo.
 /imagine - Genera una imagen con IA.
 
+/ask - Habla con {shape} sin que nadie más te responda.
 /http - Dale una URL a {shape} para que la escanee.";
 
 // Mensaje inicial predeterminado.
@@ -38,7 +39,7 @@ $DEFERROR_MSG = "Eh?";
 $DEFACTIVATE_MSG = "✅";
 $DEFDEACTIVATE_MSG = "❌";
 
-// Para comandos (se deben escapar caracteres especiales).
+// Para comandos (se deben escapar caracteres especiales)
 $MDONLY_MSG = "❌ Este comando solo se puede usar en MD\.";
 $ADMINSONLY_MSG = "❌ Solo Admins";
 
@@ -48,11 +49,12 @@ $MAX_DOCSIZE = 10;
 // Tamaño máximo de PDFs a procesar en MiB (este no llenaría tanto el contexto del modelo, ya que solo se extrae el texto)
 $MAX_PDFSIZE = 100;
 
-// Free-will:
+// Probabilidad de que el bot responda sin llamarlo (Free-Will)
+$ANSWER_PROB = 80;
+
 // Probabilidad de que el bot añada una reacción a mensajes dirijidos a este (actual: 1/15)
 $REACT_PROB1 = 15;
 
 // Probabilidad de que añada una reacción a mensajes no dirijidos a este (actual: 1/40)
 $REACT_PROB2 = 40;
-
 ?>

@@ -52,14 +52,14 @@ if($callback_query){
 
     switch($callback_data){
       case "fw_1":
-        if(file_exists("$FREEWILL_FOLDER/$chat_id-$user_id.txt")){
-          unlink("$FREEWILL_FOLDER/$chat_id-$user_id.txt");
+        if(file_exists("$FREEWILL_FOLDER/$chat_id.txt")){
+          unlink("$FREEWILL_FOLDER/$chat_id.txt");
         }
         editMessageText($chat_id, $callback_message_id, "¡Free\-will activado\!");
         break;
       case "fw_0":
-        if(!file_exists("$FREEWILL_FOLDER/$chat_id-$user_id.txt")){
-          file_put_contents("$FREEWILL_FOLDER/$chat_id-$user_id.txt","");
+        if(!file_exists("$FREEWILL_FOLDER/$chat_id.txt")){
+          file_put_contents("$FREEWILL_FOLDER/$chat_id.txt","");
         }
         editMessageText($chat_id, $callback_message_id, "¡Free\-Will desactivado\!");
         break;
@@ -80,7 +80,7 @@ $is_private = ($chat_type === 'private');
 $is_group = ($chat_type === 'group' || $chat_type === 'supergroup');
 $group_file = "$ACTIVATION_FOLDER/$chat_id.txt";
 
-$is_free = !file_exists("$FREEWILL_FOLDER/$chat_id-$user_id.txt");
+$is_free = !file_exists("$FREEWILL_FOLDER/$chat_id.txt");
 
 $user = $message['from'];
 $user_name = (string)$user['first_name'] ?? 'Desconocido';
@@ -413,11 +413,6 @@ elseif(strpos($user_text, "/setkey") === 0){
 }
 // /deletekey
 elseif(strpos($user_text, "/deletekey$bot_mention") === 0){
-    if($is_group){
-        sendReply($message_id, $MDONLY_MSG);
-        exit;
-    }
-
     $parts = explode(" ", $user_text);
     if(count($parts) >= 2){
         $key_id = trim($parts[1]);
@@ -622,7 +617,7 @@ if($is_private){
 }
     }
     $is_active = file_exists($group_file);
-    $should_respond = ($is_active || $is_reply_to_bot || $is_mentioned);
+    $should_respond = ((rand(1, $ANSWER_PROB)===1 && $is_free) || $is_active || $is_reply_to_bot || $is_mentioned);
     if(!empty($replying_to_user)){
         $user_context .= $user_name.' replying to '.$replying_to_user.'", "group": "'.$message["chat"]["title"];
     }else{
@@ -633,6 +628,8 @@ $user_context .= '", "{user}": "'.$user_name.'"])';
 
 $OReacts = [
 "Hol" => ["👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
+"Hi" => ["👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
+"Hel" => ["👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
 "Adi" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
 "Bye" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
 $SHAPE_NAME => ["🔥", "👻"]
@@ -641,7 +638,7 @@ $SHAPE_NAME => ["🔥", "👻"]
 // Reacción
 $Reacts = isset($Reactions)?array_merge($Reactions, $OReacts):$OReacts;
 
-$foundReactions = [];
+$foundReactions = ["🔥", "❤️", "🥱", "🗿", "👻", "👀"];
 foreach($Reacts as $word => $emojis){
   if(stripos($user_text, $word)!== false){
     $foundReactions = array_merge($foundReactions, $emojis);
@@ -734,7 +731,7 @@ if(!empty($media_urls)){
         $fallback_msg = $ERROR_MSG;
         $is_group?sendReply($message_id, $fallback_msg):sendMessage($fallback_msg);
     }
-}elseif($is_group && rand(1,$REACT_PROB2) === 1){
+}elseif($is_group && $is_free && rand(1,$REACT_PROB2) === 1){
   setMessageReaction($randomReaction);
 }
 exit; // Por si acaso...
