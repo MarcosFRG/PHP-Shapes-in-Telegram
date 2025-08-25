@@ -29,6 +29,7 @@ if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 if(!file_exists($FREEWILL_FOLDER)) mkdir($FREEWILL_FOLDER, 0777, true);
 
 $php_input = file_get_contents('php://input');
+file_put_contents("a.txt", $php_input);
 $update = json_decode($php_input, true);
 $callback_query = $update['callback_query'] ?? null;
 $message = $update['message'] ?? null;
@@ -72,9 +73,17 @@ if($callback_query){
         editMessageText($chat_id, $callback_message_id, "¡Free\-Will desactivado\!");
         break;
       case "reset":
+        if(!$is_private && !isUserAdmin()){
+          sendMessage($ADMINSONLY_MSG);
+          exit;
+        }
         editMessageText($chat_id, $callback_message_id, formatForTelegram(call_shapes_api_with_queue('!reset', $SHAPES_API_KEY, $SHAPE_USERNAME)));
         break;
       case "delete":
+        if(!$is_private && !isUserAdmin()){
+          sendMessage($ADMINSONLY_MSG);
+          exit;
+        }
         deleteMessage($chat_id, $callback_message_id);
     }
     exit;
@@ -87,6 +96,9 @@ $user_text = $message['text'] ?? $message['caption'] ?? '';
 $is_private = ($chat_type === 'private');
 $is_group = ($chat_type === 'group' || $chat_type === 'supergroup');
 $group_file = "$ACTIVATION_FOLDER/$chat_id.txt";
+
+$sticker = $message['sticker'];
+if(!empty($sticker)) $user_text = '["sticker_name": "'.$sticker['set_name'].'", "sticker_emoji": "'.$sticker['emoji'].'"]';
 
 $is_free = !file_exists("$FREEWILL_FOLDER/$chat_id.txt");
 
@@ -373,7 +385,7 @@ exit;
 elseif(strpos($user_text, "/mykeys$bot_mention") === 0){
   if($is_group){
     sendReply($message_id, $MDONLY_MSG);
-  exit;
+    exit;
   }
   if(file_exists($keys_file)){
     $keys_count = count($keys_data);
@@ -619,13 +631,13 @@ if($is_private){
     if(!$is_mentioned && !empty($Favorite_words) && is_array($Favorite_words)){
       foreach($Favorite_words as $word){
     if(preg_match("/\b".preg_quote($word, '/')."\b/i", $user_text)){
-        $is_mentioned = 1;
+        $is_called = 1;
         break;
     }
 }
     }
     $is_active = file_exists($group_file);
-    $should_respond = ((rand(1, $ANSWER_PROB)===1 && $is_free) || $is_active || $is_reply_to_bot || $is_mentioned);
+    $should_respond = ((rand(1, $ANSWER_PROB)===1 && $is_free) || $is_active || $is_reply_to_bot || $is_mentioned || ($is_called && $is_free));
     if(!empty($replying_to_user)){
         $user_context .= $user_name.' replying to '.$replying_to_user.'", "group": "'.$message["chat"]["title"];
     }else{
