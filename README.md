@@ -19,11 +19,11 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 ##### (Hostings como x10Hosting ya tienen todas instaladas)
 
 ## Para que esto te funcione debes:
-1. Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key** (el app-id no es necesario).
-3. Crear un bot en Telegram (con [**@BotFather**](https://t.me/BotFather)).
+1. Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key**. (el app-id no es necesario)
+3. Crear un bot en Telegram. (con [**@BotFather**](https://t.me/BotFather))
 4. Configurar los archivos '**config.php**' y '**TuBot/bot.php**'.
 5. Subir los archivos a tu servidor HTTP (con PHP y **SSL válido**).
-6. Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**), añadir el token de tu bot de Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot en tu servidor HTTP (**https://ejemplo.com/TuBot/bot.php**).
+6. Entrar al archivo '**index.php**' en tu navegador (**https://ejemplo.com/index.php**), añadir el token de tu bot de Telegram (el que te da [**@BotFather**](https://t.me/BotFather)) y añadir la URL al archivo del bot en tu servidor HTTP. (**https://ejemplo.com/TuBot/bot.php**)
 
 ## ... ¡y listo! Ya deberías tener tu shape bot funcionando sin problemas.
 Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/aplicar los comandos de tus shape bots de Telegram.
@@ -31,7 +31,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 ## También puedes:
 - Renombrar la carpeta '**TuBot/**'.
 - Copiar la carpeta '**TuBot/**' con otro nombre para hacer otra shape, sin tener que subir todos los archivos de nuevo a otro servidor.
-- Cambiar los mensajes de inicio/error/activado/desactivado de la shape (puedes usar las etiquetas "**{shape}**" y "**{user}**").
+- Cambiar los mensajes de inicio/error/activado/desactivado de la shape. (puedes usar las variables "**{shape}**" y "**{user}**" de Shspes, Inc.)
 
 ## Qué NO debes hacer:
 - Renombrar el archivo '**bot.php**', ya que '**commands.php**' no funcionaría bien.
@@ -43,7 +43,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [X] Audio/voz
 - [X] Documentos pequeños
 - [X] Procesar PDF (solo texto)
-- [ ] Stickers
+- [X] Stickers
 - [ ] Encuestas
 
 ### El shape bot puede/tiene:
