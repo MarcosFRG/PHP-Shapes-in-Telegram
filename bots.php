@@ -29,7 +29,6 @@ if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 if(!file_exists($FREEWILL_FOLDER)) mkdir($FREEWILL_FOLDER, 0777, true);
 
 $php_input = file_get_contents('php://input');
-file_put_contents("a.txt", $php_input);
 $update = json_decode($php_input, true);
 $callback_query = $update['callback_query'] ?? null;
 $message = $update['message'] ?? null;
