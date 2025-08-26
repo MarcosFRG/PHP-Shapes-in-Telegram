@@ -608,9 +608,9 @@ if(isset($message['voice'])){
 
 ';
 }
-}elseif(isset($message['photo'])){
-    $photo = end($message['photo']);
-    $file_id = $photo['file_id'];
+}elseif(isset($message['photo']) || ($VIEWSTICKERS==true && !empty($sticker['thumb']['file_id']))){
+    if(isset($message['photo'])) $photo = end($message['photo']);
+    $file_id = $photo['file_id'] ?? $sticker['thumb']['file_id'];
     $image_url = getTelegramFileUrl($file_id);
 }
 

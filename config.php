@@ -39,9 +39,12 @@ $DEFERROR_MSG = "Eh?";
 $DEFACTIVATE_MSG = "✅";
 $DEFDEACTIVATE_MSG = "❌";
 
-// Para comandos (se deben escapar caracteres especiales).
+// Para comandos (se deben escapar caracteres especiales)
 $MDONLY_MSG = "❌ Este comando solo se puede usar en MD\.";
-$ADMINSONLY_MSG = "❌ Solo Admins";
+$ADMINSONLY_MSG = "❌ Solo Admins\.";
+
+// Los bots pueden ver los stickers (la imagen)
+$VIEWSTICKERS = true;
 
 // Tamaño máximo de documentos en KiB (ten en cuenta que esto llena el contexto del modelo)
 $MAX_DOCSIZE = 10;
@@ -55,9 +58,9 @@ $ANSWER_PROB = 200;
 // Free-Will controlable por todos.
 $FW_EVERYONE = false;
 
-// Probabilidad de que el bot añada una reacción a mensajes dirijidos a este (actual: 1/15)
+// Probabilidad de que el bot añada una reacción a mensajes dirijidos a este (actual: 1/30)
 $REACT_PROB1 = 30;
 
-// Probabilidad de que añada una reacción a mensajes no dirijidos a este (actual: 1/40)
+// Probabilidad de que añada una reacción a mensajes no dirijidos a este (actual: 1/80)
 $REACT_PROB2 = 80;
 ?>
