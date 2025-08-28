@@ -47,15 +47,15 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 - [ ] Encuestas
 
 ### El shape bot puede/tiene:
-- [X] Responder a preguntas de usuarios.
+- [X] Responder a preguntas de usuarios
 - [X] Responder a menciones (solo si el bot es administrador, aunque no tenga permisos)
-- [X] Comandos de juegos.
-- [X] Free-will.
+- [X] Comandos de juegos
+- [X] Free-will
 - [X] Comandos de moderación (no terminado)
 
 ### También puedes (por ahora):
-- [X] Registrar tus propias Shape Keys.
-- [ ] Registrar tu cuenta de Shapes.
+- [X] Registrar tus propias Shape Keys
+- [ ] Registrar tu cuenta de Shapes
 
 ## Solución de problemas
 - **Error 500**: Verifica que las extensiones PHP estén activadas.
