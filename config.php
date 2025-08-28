@@ -40,8 +40,10 @@ $DEFACTIVATE_MSG = "✅";
 $DEFDEACTIVATE_MSG = "❌";
 
 // Para comandos (se deben escapar caracteres especiales)
+$GROUPS_ONLY_MSG = "❌ Este comando solo se puede usar en grupos\.";
 $MDONLY_MSG = "❌ Este comando solo se puede usar en MD\.";
 $ADMINSONLY_MSG = "❌ Solo Admins\.";
+$WO_PERMISSIONS = "❌ Necesito ser administrador con permisos para hacerlo\.";
 
 // Los bots pueden ver los stickers (la imagen)
 $VIEWSTICKERS = true;

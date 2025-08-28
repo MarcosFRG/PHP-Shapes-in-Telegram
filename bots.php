@@ -2,8 +2,8 @@
 require_once "../config.php";
 require "../funcs.php";
 
-ini_set('max_execution_time', 60);
-set_time_limit(60);
+ini_set('max_execution_time', 45);
+set_time_limit(45);
 
 global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention;
 $MAX_RETRIES = 3;
@@ -17,7 +17,12 @@ $bot_action = 0;
 if(!isset($EXTRA_HELP)) $EXTRA_HELP = '';
 $EXTRA_HELP .= ($SHAPE_COMMAND_DICE==true?"
 /dice - Lanza un dado.":'').($SHAPE_COMMAND_8BALL==true?"
-/8ball - ¡Recibe una respuesta mágica!":'');
+/8ball - ¡Recibe una respuesta mágica!":'').($SHAPE_MODERATION==true?"
+
+*Comandos de moderación:*
+/ban - Banea a un usuario respondiendo a su mensaje.
+/unban - Desbanea a un usuario respondiendo a su mensaje.
+":'');
 
 if(empty($START_MSG)) $START_MSG=$DEFSTART_MSG;
 if(empty($ERROR_MSG)) $ERROR_MSG=$DEFERROR_MSG;
@@ -148,26 +153,32 @@ if(isset($message['reply_to_message'])){
 
 if($is_group && strpos($user_text, "/") === 0 && (strpos($user_text, "@") < 2 || strpos($user_text, $BOT_USERNAME) === false)) exit;
 
-if($is_group){
-    if(strpos($user_text, "/activate@$BOT_USERNAME") === 0){
-        if(isUserAdmin()){
-            file_put_contents($group_file, 'active');
-            sendReply($message_id, $ACTIVATE_MSG);
-        }else{
-            sendReply($message_id, "❌ Solo los administradores pueden activarme.");
-        }
-        exit;
-    }elseif(strpos($user_text, "/deactivate@$BOT_USERNAME") === 0){
-        if(isUserAdmin()){
-            if(file_exists($group_file)){
-                unlink($group_file);
-            }
-            sendReply($message_id, $DEACTIVATE_MSG);
-        }else{
-            sendReply($message_id, "❌ Solo los administradores pueden desactivarme.");
-        }
+if(strpos($user_text, "/activate$bot_mentiom") === 0){
+    if($is_private){
+        sendMessage($GROUPS_ONLY_MSG);
         exit;
     }
+    if(isUserAdmin()){
+        file_put_contents($group_file, 'active');
+        sendReply($message_id, $ACTIVATE_MSG);
+    }else{
+        sendReply($message_id, "❌ Solo los administradores pueden activarme.");
+        }
+    exit;
+}elseif(strpos($user_text, "/deactivate$bot_mention") === 0){
+    if($is_private){
+        sendMessage($GROUPS_ONLY_MSG);
+        exit;
+    }
+    if(isUserAdmin()){
+        if(file_exists($group_file)){
+            unlink($group_file);
+        }
+        sendReply($message_id, $DEACTIVATE_MSG);
+    }else{
+        sendReply($message_id, "❌ Solo los administradores pueden desactivarme.");
+    }
+    exit;
 }
 
 if(($is_group || $is_private) && strpos($user_text, "/wack$bot_mention") === 0){
@@ -350,6 +361,77 @@ elseif($is_group && strpos($user_text, "/ask$bot_mention ") === 0){
   $response = formatForTelegram(call_shapes_api_with_queue(str_replace("/ask$bot_mention ", "", $user_text), $SHAPES_API_KEY, $SHAPE_USERNAME));
   sendReply($message_id, $response);
   exit;
+}
+// /ban
+elseif($SHAPE_MODERATION == true && strpos($user_text, "/ban$bot_mention") === 0){
+    if($is_private){
+        sendMessage($GROUPS_ONLY_MSG);
+        exit;
+    }
+    if(!isUserAdmin()){
+        sendReply($message_id, $ADMINSONLY_MSG);
+        exit;
+    }
+    // Verificar si el bot es admin con permisos
+    if(!isBotAdminWithPermissions()){
+        sendReply($message_id, $WO_PERMISSIONS);
+        exit;
+    }
+    // Obtener el ID del usuario a banear
+    $reply_to_message = $message['reply_to_message'] ?? null;
+    if($reply_to_message){
+        $user_to_ban = $reply_to_message['from']['id'];
+        $chat_id = $message['chat']['id'];
+        // Llamar a la API de Telegram para banear
+        $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/banChatMember";
+        $post_data = ['chat_id' => $chat_id, 'user_id' => $user_to_ban];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        curl_close($ch);
+        sendReply($message_id, "Usuario baneado\.");
+    }else{
+        sendReply($message_id, "❌ Responde a un mensaje del usuario para banear\.");
+    }
+    exit;
+}
+
+// /unban
+elseif($SHAPE_MODERATION == true && strpos($user_text, "/unban$bot_mention") === 0){
+    if($is_private){
+        sendMessage($GROUPS_ONLY_MSG);
+        exit;
+    }
+    if(!isUserAdmin()){
+        sendReply($message_id, $ADMINSONLY_MSG);
+        exit;
+    }
+    // Verificar si el bot es admin con permisos
+    if(!isBotAdminWithPermissions()){
+        sendReply($message_id, $WO_PERMISSIONS);
+        exit;
+    }
+    // Obtener el ID del usuario a desbanear
+    $reply_to_message = $message['reply_to_message'] ?? null;
+    if($reply_to_message){
+        $user_to_unban = $reply_to_message['from']['id'];
+        $chat_id = $message['chat']['id'];
+        // Llamar a la API de Telegram para desbanear
+        $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/unbanChatMember";
+        $post_data = ['chat_id' => $chat_id, 'user_id' => $user_to_unban];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        curl_close($ch);
+        sendReply($message_id, "Usuario desbaneado\.");
+    }else{
+        sendReply($message_id, "Responde a un mensaje del usuario para desbanear\.");
+    }
+    exit;
 }
 // /register
 elseif(strpos($user_text, "/register$bot_mention") === 0){
@@ -651,6 +733,7 @@ $OReacts = [
 "Hel" => ["👊", "👻", "🥱", "👀", "🤖", "🔥", "🙏", "🎉", "🎊", "🍑"],
 "Adi" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
 "Bye" => ["🗿", "🆒", "💩", "👍", "💯", "💔", "👊"],
+"Kiond" => ["👍", "🔥", "👀", "🗿"],
 $SHAPE_NAME => ["🔥", "👻"]
 ];
 

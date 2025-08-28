@@ -612,4 +612,56 @@ function OpenSSL_Dec($textoCifrado){
   $textoCifrado = substr($datos, 16);
   return openssl_decrypt($textoCifrado, 'AES-256-CBC', $ENC_KEY, 0, $iv);
 }
+
+// Obtiene el ID del bot (se cachea para evitar múltiples llamadas a la API)
+$BOT_USER_ID = null;
+
+function getBotUserId() {
+    global $TELEGRAM_TOKEN, $BOT_USER_ID;
+
+    if($BOT_USER_ID !== null){
+        return $BOT_USER_ID;
+    }
+
+    $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/getMe";
+    $response = file_get_contents($url);
+    $data = json_decode($response, true);
+
+    if($data && $data['ok']){
+        $BOT_USER_ID = $data['result']['id'];
+        return $BOT_USER_ID;
+    }
+
+    return null;
+}
+
+// Verifica si el bot es administrador y tiene permisos para restringir miembros
+function isBotAdminWithPermissions(){
+    global $TELEGRAM_TOKEN, $chat_id;
+
+    $bot_user_id = getBotUserId();
+    if(!$bot_user_id){
+        return false;
+    }
+
+    $url = "https://api.telegram.org/bot$TELEGRAM_TOKEN/getChatMember?chat_id=$chat_id&user_id=$bot_user_id";
+    $response = file_get_contents($url);
+    $data = json_decode($response, true);
+
+    if($data && $data['ok']){
+        $status = $data['result']['status'];
+        $permissions = $data['result']['permissions'] ?? [];
+
+        if(in_array($status, ['creator', 'administrator'])){
+            if($status === 'creator'){
+                return true;
+            }
+            if(isset($permissions['can_restrict_members']) && $permissions['can_restrict_members'] === true){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 ?>

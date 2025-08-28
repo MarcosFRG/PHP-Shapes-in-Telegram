@@ -75,6 +75,16 @@
     "variable": ""
   },
   {
+    "name": "ban",
+    "description": "Banea a un usuario respondiendo a su mensaje",
+    "variable": "SHAPE_MODERATION"
+  },
+  {
+    "name": "unban",
+    "description": "Desbanea a un usuario respondiendo a su mensaje",
+    "variable": "SHAPE_MODERATION"
+  },
+  {
     "name": "http",
     "description": "Entra a una URL",
     "variable": ""
