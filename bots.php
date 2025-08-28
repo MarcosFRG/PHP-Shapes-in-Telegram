@@ -153,7 +153,7 @@ if(isset($message['reply_to_message'])){
 
 if($is_group && strpos($user_text, "/") === 0 && (strpos($user_text, "@") < 2 || strpos($user_text, $BOT_USERNAME) === false)) exit;
 
-if(strpos($user_text, "/activate$bot_mentiom") === 0){
+if(strpos($user_text, "/activate$bot_mention") === 0){
     if($is_private){
         sendMessage($GROUPS_ONLY_MSG);
         exit;
