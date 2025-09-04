@@ -104,7 +104,8 @@ $is_free = !file_exists("$FREEWILL_FOLDER/$chat_id.txt");
 $user = $message['from'];
 $user_name = (string)$user['first_name'] ?? 'Desconocido';
 $user_id = (string)$user['id'];
-if(filesize($INFO_FILE)>500 && file_get_contents("t_$INFO_FILE")<time()-60*$UPDATE_TIME){
+
+if(filesize($INFO_FILE)>500 && (time()-file_get_contents("t_$INFO_FILE") <= 60*$UPDATE_TIME)){
   $SHAPE_CONTENT = file_get_contents($INFO_FILE);
 }else{
   $SHAPE_CONTENT = file_get_contents("https://api.shapes.inc/shapes/public/$SHAPE_USERNAME");
