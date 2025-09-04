@@ -653,12 +653,13 @@ function isBotAdminWithPermissions(){
         $permissions = $data['result']['permissions'] ?? [];
 
         if(in_array($status, ['creator', 'administrator'])){
-            if($status === 'creator'){
+            return true;
+/*            if($status === 'creator'){
                 return true;
             }
-            if(isset($permissions['can_restrict_members']) && $permissions['can_restrict_members'] === true){
+            if($permissions['can_restrict_members'] == true){
                 return true;
-            }
+            }*/
         }
     }
 

@@ -5,12 +5,13 @@ require "../funcs.php";
 ini_set('max_execution_time', 45);
 set_time_limit(45);
 
-global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention;
+global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention, $SHAPE_INFO;
 $MAX_RETRIES = 3;
 $MAX_ATTEMPTS = 10;
 $REQUEST_DELAY = 2;
 $ACTIVATION_FOLDER = 'Activated';
 $FREEWILL_FOLDER = 'No_Free-will';
+$INFO_FILE = "info.json";
 
 $bot_action = 0;
 
@@ -23,12 +24,6 @@ $EXTRA_HELP .= ($SHAPE_COMMAND_DICE==true?"
 /ban - Banea a un usuario respondiendo a su mensaje.
 /unban - Desbanea a un usuario respondiendo a su mensaje.
 ":'');
-
-if(empty($START_MSG)) $START_MSG=$DEFSTART_MSG;
-if(empty($ERROR_MSG)) $ERROR_MSG=$DEFERROR_MSG;
-if(empty($ACTIVATE_MSG)) $ACTIVATE_MSG=$DEFACTIVATE_MSG;
-if(empty($DEACTIVATE_MSG)) $DEACTIVATE_MSG=$DEFDEACTIVATE_MSG;
-if(strpos($ADMINSONLY_MSG, "\\") === false) $ADMINSONLY_MSG = formatForTelegram($ADMINSONLY_MSG);
 
 if(!file_exists($ACTIVATION_FOLDER)) mkdir($ACTIVATION_FOLDER, 0777, true);
 if(!file_exists($FREEWILL_FOLDER)) mkdir($FREEWILL_FOLDER, 0777, true);
@@ -109,6 +104,26 @@ $is_free = !file_exists("$FREEWILL_FOLDER/$chat_id.txt");
 $user = $message['from'];
 $user_name = (string)$user['first_name'] ?? 'Desconocido';
 $user_id = (string)$user['id'];
+if(filesize($INFO_FILE)>500 && file_get_contents("t_$INFO_FILE")<time()-60*$UPDATE_TIME){
+  $SHAPE_CONTENT = file_get_contents($INFO_FILE);
+}else{
+  $SHAPE_CONTENT = file_get_contents("https://api.shapes.inc/shapes/public/$SHAPE_USERNAME");
+  file_put_contents("t_$INFO_FILE", time());
+  file_put_contents("$INFO_FILE", $SHAPE_CONTENT);
+}
+
+$SHAPE_INFO = json_decode($SHAPE_CONTENT, true);
+
+$SHAPE_NAME = $SHAPE_INFO["name"];
+$START_MSG = $SHAPE_INFO["shape_settings"]["shape_initial_message"];
+$ERROR_MSG = $SHAPE_INFO["error_message"];
+$Favorite_words = $SHAPE_INFO["keywords"];
+
+if(empty($START_MSG)) $START_MSG=$DEFSTART_MSG;
+if(empty($ERROR_MSG)) $ERROR_MSG=$DEFERROR_MSG;
+if(empty($ACTIVATE_MSG)) $ACTIVATE_MSG=$DEFACTIVATE_MSG;
+if(empty($DEACTIVATE_MSG)) $DEACTIVATE_MSG=$DEFDEACTIVATE_MSG;
+if(strpos($ADMINSONLY_MSG, "\\") === false) $ADMINSONLY_MSG = formatForTelegram($ADMINSONLY_MSG);
 
 $START_MSG = formatForTelegram(replaceVars($START_MSG));
 $ERROR_MSG = formatForTelegram(replaceVars($ERROR_MSG));
@@ -722,7 +737,7 @@ if($is_private){
     if(!empty($replying_to_user)){
         $user_context .= $user_name.' replying to '.$replying_to_user.'", "group": "'.$message["chat"]["title"];
     }else{
-      $user_context .= 'group": '.$message['chat']['title'];
+      $user_context .= 'group": "'.$message['chat']['title'];
     }
 }
 $user_context .= '", "{user}": "'.$user_name.'"])';

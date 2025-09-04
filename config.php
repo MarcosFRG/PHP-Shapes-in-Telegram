@@ -5,6 +5,9 @@ $SITE_PASS = 'TU_CONTRASEÑA';
 // Tu clave secreta para guardar tokens.
 $ENC_KEY = 'TU_KEY_SECRETA';
 
+// Tiempo (en minutos) en el que se actualizará el archivo de información de la shape, para evitar saturar el servidor de Shapes.
+$UPDATE_TIME = 10;
+
 // Mensaje del comando /help (soporta las variables {shape} y {user})
 $HELP_CMD = "*Comandos de {shape}*:
 
