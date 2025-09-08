@@ -1,7 +1,5 @@
 # PHP-Shapes-in-Telegram
-Este proyecto **aún está en desarrollo**.
-
-**Este proyecto usa [Shapes, Inc. API](https://github.com/shapesinc/shapes-api) para funcionar.**
+**Este proyecto aún está en desarrollo y usa [Shapes, Inc. API](https://github.com/shapesinc/shapes-api).**
 
 **Versiones de PHP:**
 - 7.4 (mínima)
