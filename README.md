@@ -59,7 +59,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 
 ## Solución de problemas
 - **Error 500**: Verifica que las extensiones PHP estén activadas.
-- **Webhook no funciona**: Asegúrate de que tu servidor tenga SSL válido.
+- **Webhook no funciona**: Asegúrate de que tu servidor tenga **SSL válido** y permita solicitudes de la **API de Telegram**.
 
 Si tienes preguntas o problemas, puedes unirte a mi grupo de Shapes de **Telegram** ([MFRG_Shapes_chat](https://t.me/MFRG_Shapes)) o [escribirme directamente](https://t.me/MarcosFRGames).
 ¡Prueba mis shapes [aquí](https://t.me/MFRG_Shapes)!
