@@ -1,5 +1,5 @@
 # PHP-Shapes-in-Telegram
-Este proyecto aún está en desarrollo, pueden haber errores.
+Este proyecto **aún está en desarrollo**.
 
 **Este proyecto usa [Shapes, Inc. API](https://github.com/shapesinc/shapes-api) para funcionar.**
 
@@ -16,7 +16,7 @@ Este proyecto aún está en desarrollo, pueden haber errores.
 - PDFParser (viene incluído)
 - OpenSSL
 
-##### (Hostings como x10Hosting ya tienen todas instaladas)
+**(Hostings como x10Hosting ya tienen todas instaladas)**
 
 ## Para que esto te funcione debes:
 1. Entrar a [Shapes, Inc. - Developer](https://shapes.inc/developer) y crear una API Key de tipo **Application** (3ra opción), copiar el **API Key**. (el app-id no es necesario)
@@ -59,7 +59,7 @@ Entra al archivo '**commands.php**' en tu navegador para añadir/editar/borrar/a
 
 ## Solución de problemas
 - **Error 500**: Verifica que las extensiones PHP estén activadas.
-- **Webhook no funciona**: Asegúrate de que tu servidor tenga **SSL válido** y permita solicitudes de la **API de Telegram**.
+- **Webhook no funciona**: Asegúrate de que tu servidor tenga SSL válido y permita solicitudes de la API de Telegram.
 
 Si tienes preguntas o problemas, puedes unirte a mi grupo de Shapes de **Telegram** ([MFRG_Shapes_chat](https://t.me/MFRG_Shapes)) o [escribirme directamente](https://t.me/MarcosFRGames).
 ¡Prueba mis shapes [aquí](https://t.me/MFRG_Shapes)!
