@@ -130,7 +130,7 @@ function call_shapes_api($text, $api_key, $shape, $image_url = null, $audio_url 
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 25);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 50);
 
     $response = curl_exec($ch);
 

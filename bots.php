@@ -2,8 +2,8 @@
 require_once "../config.php";
 require "../funcs.php";
 
-ini_set('max_execution_time', 45);
-set_time_limit(45);
+ini_set('max_execution_time', 60);
+set_time_limit(60);
 
 global $MAX_RETRIES, $MAX_ATTEMPTS, $REQUEST_DELAY, $ERROR_MSG, $bot_action, $SHAPE_USERNAME, $SHAPES_API_KEY, $chat_id, $user_id, $using_key_id, $is_private, $keys_file, $user_name, $bot_mention, $SHAPE_INFO;
 $MAX_RETRIES = 3;
@@ -105,7 +105,7 @@ $user = $message['from'];
 $user_name = (string)$user['first_name'] ?? 'Desconocido';
 $user_id = (string)$user['id'];
 
-if(filesize($INFO_FILE)>500 && (time()-file_get_contents("t_$INFO_FILE") <= 60*$UPDATE_TIME)){
+if(filesize($INFO_FILE)>500 && (time()-file_get_contents("t_$INFO_FILE") < 60*$UPDATE_TIME)){
   $SHAPE_CONTENT = file_get_contents($INFO_FILE);
 }else{
   $SHAPE_CONTENT = file_get_contents("https://api.shapes.inc/shapes/public/$SHAPE_USERNAME");
@@ -775,6 +775,7 @@ if($should_respond && (!empty($clean_text) || !empty($image_url) || !empty($audi
     $new_response = str_replace(["$SHAPE_NAME:", $bot_mention], ["", "@$SHAPE_NAME"],(strpos($response, $user_text) === 0?str_replace(trim($user_text), "", trim($response)):$response));
     $nr_response = strpos($new_response, "\([\"")?preg_replace('/\([^)]*\)/', '', $new_response, 1):$new_response;
     $formatted_response = formatForTelegram($nr_response);
+    if($formatted_response==="ext") $formatted_response = "$ERROR_MSG \(ext\)";
 
     if(!empty($formatted_response) && $formatted_response != $SHAPE_NAME){
         // Detectar todos los enlaces multimedia

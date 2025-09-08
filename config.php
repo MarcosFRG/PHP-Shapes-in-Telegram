@@ -6,7 +6,7 @@ $SITE_PASS = 'TU_CONTRASEÑA';
 $ENC_KEY = 'TU_KEY_SECRETA';
 
 // Tiempo (en minutos) en el que se actualizará el archivo de información de la shape, para evitar saturar el servidor de Shapes.
-$UPDATE_TIME = 10;
+$UPDATE_TIME = 30;
 
 // Mensaje del comando /help (soporta las variables {shape} y {user})
 $HELP_CMD = "*Comandos de {shape}*:

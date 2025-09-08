@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require "config.php";
+require_once "config.php";
 
 // Contraseña de acceso
 define('PASSWORD', $SITE_PASS);
@@ -11,7 +11,7 @@ if(!isset($_SESSION['authenticated'])){
     if(isset($_POST['password'])){
         if($_POST['password'] === PASSWORD){
             $_SESSION['authenticated'] = true;
-        } else {
+        }else{
             $error = "Contraseña incorrecta";
         }
     }
@@ -117,24 +117,36 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])){
     if(isset($_POST['execute_commands'])){
         // Escanear directorios
         $directories = array_filter(glob('*'), 'is_dir');
-        $directories = array_diff($directories, ['Commands', 'users']);
+        $directories = array_diff($directories, ['Commands', 'users', 'PDFParser']);
 
-        foreach ($directories as $dir){
+        foreach($directories as $dir){
             $botFile = $dir.'/bot.php';
             if(file_exists($botFile)){
                 // Extraer token y variables del bot
                 $content = file_get_contents($botFile);
                 preg_match('/\$TELEGRAM_TOKEN\s*=\s*[\'"]([^\'"]+)[\'"]/', $content, $tokenMatch);
-                
+
                 if(!empty($tokenMatch[1])){
                     $token = $tokenMatch[1];
                     $botCommands = [];
 
-                    // Obtener $SHAPE_NAME si existe
+                    // Obtener $SHAPE_NAME si existe directamente
                     preg_match('/\$SHAPE_NAME\s*=\s*[\'"]([^\'"]+)[\'"]/', $content, $shapeNameMatch);
                     $shapeName = !empty($shapeNameMatch[1]) ? $shapeNameMatch[1] : '';
 
-                    foreach ($commands as $cmd){
+                    // Si no existe SHAPE_NAME, obtener SHAPE_USERNAME y consultar la API
+                    if(empty($shapeName)){
+                        preg_match('/\$SHAPE_USERNAME\s*=\s*[\'"]([^\'"]+)[\'"]/', $content, $shapeUsernameMatch);
+                        if(!empty($shapeUsernameMatch[1])){
+                            $shapeUsername = $shapeUsernameMatch[1];
+                            $shapeInfo = json_decode(file_get_contents("https://api.shapes.inc/shapes/public/$shapeUsername"), true);
+                            if($shapeInfo && isset($shapeInfo["name"])){
+                                $shapeName = $shapeInfo["name"];
+                            }
+                        }
+                    }
+
+                    foreach($commands as $cmd){
                         // Verificar si el comando requiere una variable especial
                         if(!empty($cmd['variable'])){
                             preg_match('/\$'.preg_quote($cmd['variable']).'\s*=\s*(?:[\'"]([^\'"]+)[\'"]|true|false|\d+)/', $content, $varMatch);
@@ -154,7 +166,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])){
                     // Enviar comandos a la API de Telegram
                     if(!empty($botCommands)){
                         $apiUrl = "https://api.telegram.org/bot{$token}/setMyCommands";
-                        $postData = ['commands' => json_encode($botCommands)];
 
                         $ch = curl_init($apiUrl);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -185,15 +196,26 @@ if($commands === null){
 $directories = array_filter(glob('*'), 'is_dir');
 $directories = array_diff($directories, ['Commands', 'users']);
 $bots = [];
-foreach ($directories as $dir){
+foreach($directories as $dir){
     $botFile = $dir.'/bot.php';
     if(file_exists($botFile)){
         $content = file_get_contents($botFile);
         preg_match('/\$TELEGRAM_TOKEN\s*=\s*[\'"]([^\'"]+)[\'"]/', $content, $tokenMatch);
         if(!empty($tokenMatch[1])){
-            // Obtener SHAPE_NAME para mostrarlo en la tabla
+            // Obtener SHAPE_NAME directamente o a través de SHAPE_USERNAME
             preg_match('/\$SHAPE_NAME\s*=\s*[\'"]([^\'"]+)[\'"]/', $content, $shapeNameMatch);
-            $shapeName = !empty($shapeNameMatch[1]) ? $shapeNameMatch[1] : 'No definido';
+            $shapeName = !empty($shapeNameMatch[1]) ? $shapeNameMatch[1] : '';
+
+            if(empty($shapeName)){
+                preg_match('/\$SHAPE_USERNAME\s*=\s*[\'"]([^\'"]+)[\'"]/', $content, $shapeUsernameMatch);
+                if(!empty($shapeUsernameMatch[1])){
+                    $shapeUsername = $shapeUsernameMatch[1];
+                    $shapeInfo = json_decode(file_get_contents("https://api.shapes.inc/shapes/public/$shapeUsername"), true);
+                    $shapeName = $shapeInfo && isset($shapeInfo["name"]) ? $shapeInfo["name"] : 'Shape';
+                }else{
+                    $shapeName = 'Shape';
+                }
+            }
 
             $bots[] = [
                 'name' => $dir,
@@ -269,7 +291,7 @@ if(isset($_GET['edit'])){
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($bots as $bot): ?>
+                    <?php foreach($bots as $bot): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($bot['name']); ?></td>
                             <td><?php echo htmlspecialchars(substr($bot['token'], 0, 10).'...'); ?></td>
@@ -279,7 +301,6 @@ if(isset($_GET['edit'])){
                 </tbody>
             </table>
         </div>
-
         <div class="panel">
             <h2>Comandos Actuales</h2>
             <form method="post">
@@ -294,7 +315,7 @@ if(isset($_GET['edit'])){
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($commands as $index => $cmd): ?>
+                        <?php foreach($commands as $index => $cmd): ?>
                             <tr>
                                 <td><?php echo $index + 1; ?></td>
                                 <td>/<?php echo htmlspecialchars($cmd['name']); ?></td>
@@ -317,7 +338,6 @@ if(isset($_GET['edit'])){
                 </table>
             </form>
         </div>
-
         <div class="panel">
             <h2><?php echo $editing ? 'Editar Comando' : 'Añadir Nuevo Comando'; ?></h2>
             <form method="post">
@@ -336,7 +356,7 @@ if(isset($_GET['edit'])){
                     <input type="text" id="command_description" name="command_description" required 
                            value="<?php echo $editing ? htmlspecialchars($editCommand['description']) : ''; ?>" 
                            placeholder="Ej: Lanza un dado {shape}">
-                    <small>Usa {shape} para que se reemplace por el SHAPE_NAME del bot</small>
+                    <small>Usa {shape} para que se reemplace por el nombre de la shape</small>
                 </div>
                 <div class="form-group">
                     <label for="command_variable">Variable Especial (opcional, ej: "SHAPE_COMMAND_8BALL")</label>
@@ -353,7 +373,6 @@ if(isset($_GET['edit'])){
                 <?php endif; ?>
             </form>
         </div>
-
         <div class="panel">
             <h2>Acciones</h2>
             <form method="post">
