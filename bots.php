@@ -345,7 +345,7 @@ Contenido de '$url'.:\n\n$truncated_content
         }
 
         // Procesar y enviar la respuesta
-        $clean_response = trim(str_replace($SHAPE_NAME.":", "", $response));
+        $clean_response = trim(str_replace("$SHAPE_NAME:", "", $response));
         $formatted_response = formatForTelegram($clean_response);
 
         $is_group?sendReply($message_id, $formatted_response):sendMessage($formatted_response);
@@ -373,8 +373,15 @@ elseif(strpos($user_text, "/sleep$bot_mention") === 0){
   exit;
 }
 // /ask
-elseif($is_group && strpos($user_text, "/ask$bot_mention ") === 0){
-  $response = formatForTelegram(call_shapes_api_with_queue(str_replace("/ask$bot_mention ", "", $user_text), $SHAPES_API_KEY, $SHAPE_USERNAME));
+elseif(strpos($user_text, "/ask$bot_mention") === 0){
+  if($is_private){
+    sendMessage($GROUPS_ONLY_MSG);
+    exit;
+  }elseif($user_text=="/ask$bot_mention"){
+    $response = "❌ Uso: /ask$bot_mention \[mensaje\]";
+  }else{
+    $response = formatForTelegram(call_shapes_api_with_queue(str_replace("/ask$bot_mention ", "", $user_text), $SHAPES_API_KEY, $SHAPE_USERNAME));
+  }
   sendReply($message_id, $response);
   exit;
 }
@@ -453,7 +460,7 @@ elseif($SHAPE_MODERATION == true && strpos($user_text, "/unban$bot_mention") ===
 elseif(strpos($user_text, "/register$bot_mention") === 0){
   if($is_group){
     sendReply($message_id, $MDONLY_MSG);
-  exit;
+    exit;
   }
   $lines = explode("
 ", trim($user_text));
